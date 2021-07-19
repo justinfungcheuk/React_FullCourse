@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>2_使用js創建虛擬DOM</title>
+</head>
+  <body>
+  <!-- 準備好一個 "容器" -->
+  <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
+  <div id="test"></div>
+
+  <!-- 引入 react 核心庫 -->
+  <script type="text/javascript" src="../js/react.development.js"></script>
+  <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
+  <script type="text/javascript" src="../js/react-dom.development.js"></script>
+
+
+  <script type="text/javascript"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+  // 1. 創建虛擬 DOM = Virtual DOM
+  const VDOM = React.createElement('h1',{id:'title'},React.createElement('span',{},'Hello,React')) /* 標籤名,標籤屬性,標籤內容 */
+  // 2. 渲染虛擬 DOM 到頁面
+  ReactDOM.render(VDOM,document.getElementById('test')) // 第一個參數是 虛擬DOM  （渲染哪一個虛擬DOM）, 第二個參數是容器（渲染哪一個容器）
+  </script>
+  </body>
+</html>
