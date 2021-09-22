@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>2_對props進行使用</title>
+</head>
+  <body>
+  <!-- 準備好一個 "容器" -->
+  <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
+  <div id="test1"></div>
+  <div id="test2"></div>
+  <div id="test3"></div>
+
+  <!-- 引入 react 核心庫 -->
+  <script type="text/javascript" src="../js/react.development.js"></script>
+  <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
+  <script type="text/javascript" src="../js/react-dom.development.js"></script>
+  <!-- 引入 babel, 用於將 jsx 專為 js -->
+  <script type="text/javascript" src="../js/babel.min.js"></script>
+  <!-- 引入prop-types,用於對組件標籤屬性進行限制 -->
+  <script type="text/javascript" src="../js/prop-types.js"></script>
+
+  <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+  // 1. 創建組件
+  class Person extends React.Component{
+      // 給 類 自身加東西，只要保證能夠為 Person 該 類Person 本身加上該兩個屬性 propTypes 和 defaultProps，React 就能夠幫你做限制
+      // 所以當我們用 類 去定義組件的時候，一般會在下面的語法做出限制，再寫下面的 render
+
+
+      constructor(props){
+          // 構造器是否接收 props，是否傳遞給 super，取決於：是否希望在構造器中通過 this 訪問 props
+
+          // 但是以上的構造器方法在開發中是非常少用的，所以類中的構造器能省略就省略，幾乎不用該方法。
+
+          // console.log(props);
+          super(props)
+          console.log('constructor',this.props);
+          // 在類中的構造器傳不傳 props，要視乎你希不希望在類中通過實例來訪問 props
+      }
+
+      //對標籤屬性進行類型，必要性的限制
+      static propTypes = { // propTypes 是 React 裡面的規矩，只要為類加上自身的 propTypes 屬性，就是在加規則
+      name:PropTypes.string.isRequired,  // '必傳，字符串'， 而具體的規則，必須在 React.PropTypes 裡面尋找
+      // React 裡面有個內置的屬性是大寫的 PropTypes
+      // 限制name必傳，且為字符串
+      sex:PropTypes.string, //因為性別可以不傳值，所以可以不寫 isRequired
+      // 限制sex且為字符串
+      age:PropTypes.number,
+      // 限制age為數值
+      speak:PropTypes.func,
+      // 限制speak為函數
+     }
+
+      //對標籤屬性進行類型，必要性的限制
+      static defaultProps = { // defaultProps 代表默認值
+      sex: '男', //sex默認值為男
+      age:18 // age默認值為18
+     }
+     // 以上的就是對標籤屬性進行限制以及默認值的指定
+     
+
+     // 如果該 Person 還有自己的狀態，可以用下面的語法
+     // state = {} 初始化狀態
+
+     
+
+      render(){ // render 是 類 的一個方法
+         // console.log(this);
+          const {name,age,sex} = this.props
+          // props 是只讀的
+          // this.props.name = 'jack' // 此行代碼會報錯，因為 props 是只讀的
+
+          return (
+              <ul>
+              <li>姓名：{name}</li>
+              <li>性別：{sex}</li>
+              <li>年齡：{age+1}</li>
+              </ul>
+          )
+      }
+  }
+
+  // 渲染組件到頁面
+  ReactDOM.render(<Person name="jerry" speak={speak}/>,document.getElementById('test1'))
+  ReactDOM.render(<Person name="tom" age={18} sex="女" />,document.getElementById('test2'))
+
+  const p = {name:'老劉', age:18, sex:'女'}
+  // console.log('@',...p);
+  // ReactDO.render(<Person name={p.name} age={p.age} sex={p.sex}/>,document.getElementById('test3'))
+  ReactDOM.render(<Person {...p} />,document.getElementById('test3'))
+  // React裡面的 ... 是作為一個分隔符在使用
+
+  function speak(){
+      console.log('我說話了');
+  }
+  </script>
+  </body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>jsx語法規則</title>
+</head>
+  <body>
+  <script type="text/javascript">
+  function demo () {   
+      console.log(this);
+  }
+  demo()
+  const x = demo.bind({a:1,b:2})
+  x()
+  </script>
+  </body>
+</html>

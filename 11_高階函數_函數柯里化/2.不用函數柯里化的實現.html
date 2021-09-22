@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>高階函數_函數柯里化</title>
+</head>
+  <body>
+  <!-- 準備好一個 "容器" -->
+  <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
+  <div id="test"></div>
+
+  <!-- 引入 react 核心庫 -->
+  <script type="text/javascript" src="../js/react.development.js"></script>
+  <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
+  <script type="text/javascript" src="../js/react-dom.development.js"></script>
+  <!-- 引入 babel, 用於將 jsx 專為 js -->
+  <script type="text/javascript" src="../js/babel.min.js"></script>
+
+  <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+  // #region
+  /*
+   高階函數: 如果一個函數符合下面 2個 規範中的任何一個，那該函數就是高階函數
+   1. 若 A函數，接收的參數是一個函數，那麼 A 就可以稱之為高階函數
+   2. 若 A函數，調用的返回值依然是一個函數，那麼 A 就可以稱之為高階函數
+   常見的高階函數有：Promise，setTimeout，arr.map() 等等
+
+   函數的柯里化: 通過函數調用繼續fanhui函數的方式，實現多次接收參數最後統一處理的函數編碼形式
+   */
+   //#endregion
+
+  // new Promise(()=>{})
+  // setTimeout(()=>{})
+
+  // 1. 創建組件
+  class Login extends React.Component{
+
+// 初始化狀態
+state = {
+    username:'', //用戶名
+    password:'' //密碼
+}
+
+//保存表單數據到狀態中
+saveFormData = (dataType, event)=>{
+    this.setState({[dataType]:event.target.value})
+
+}
+
+//表單提交的回調
+handleSubmit = (event)=>{
+    event.preventDefault() // 阻止表單提交
+    const {username,password} = this.state // 當你回頭去提示信息的時候，username 和 password 要從 state 取得，就已經可以得到真正的值
+    alert(`你輸入的用戶名是: ${username}, 你輸入的密碼是: ${password}`) // 因為已經從上面取得真正的值，所以不要再重新取得 value
+}
+render(){
+    return(
+        <form onSubmit={this.handleSubmit}>
+
+        {/** 把 saveFormData 作為 onChange 的回調 */}
+
+        {/** 把 nChange={this.saveFormData('username') 
+        把 saveFormData('username') 該函數調用的 返回值 作為 onChange 的回調
+        */}
+
+        {/*
+        * 透過調用 saveFormData 來傳遞兩個值 username 和 event （傳遞 event 是因為發生在 onChange 那個元素的 value 值, 所以可以通過 value 取出來)
+         onChange 需要一個函數作為回調，而 React 會幫助調用 event 該函數來傳入，通過後面的 event 就可以取得值
+         所以通過該函數調用 saveFormData 就可以得到 username 的值
+         */}
+        用戶名: <input onChange={event => this.saveFormData('username',event) } type="text" name="username"/>
+        密碼: <input onChange={event => this.saveFormData('password',event) } type="password" name="password"/>
+        <button>登錄</button>
+        </form>
+    )
+}
+}
+// 渲染組件
+ReactDOM.render(<Login/>,document.getElementById('test'))
+  </script>
+  </body>
+</html>

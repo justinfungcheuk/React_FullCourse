@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>1_props基本使用</title>
+</head>
+  <body>
+  <!-- 準備好一個 "容器" -->
+  <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
+  <div id="test1"></div>
+  <div id="test2"></div>
+  <div id="test3"></div>
+
+  <!-- 引入 react 核心庫 -->
+  <script type="text/javascript" src="../js/react.development.js"></script>
+  <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
+  <script type="text/javascript" src="../js/react-dom.development.js"></script>
+  <!-- 引入 babel, 用於將 jsx 專為 js -->
+  <script type="text/javascript" src="../js/babel.min.js"></script>
+
+  <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+  // 1. 創建組件
+  class Person extends React.Component{
+      render(){
+         // console.log(this);
+          const {name,age,sex} = this.props
+          return (
+              <ul>
+              <li>姓名：{name}</li>
+              <li>性別：{sex}</li>
+              <li>年齡：{age+1}</li>
+              </ul>
+          )
+      }
+  }
+  // 渲染組件到頁面
+  ReactDOM.render(<Person name="jerry" age={19} sex="男" />,document.getElementById('test1'))
+  ReactDOM.render(<Person name="tom" age={18} sex="女" />,document.getElementById('test2'))
+
+  const p = {name:'老劉', age:18, sex:'女'}
+  // console.log('@',...p);
+  // ReactDO.render(<Person name={p.name} age={p.age} sex={p.sex}/>,document.getElementById('test3'))
+  ReactDOM.render(<Person {...p} />,document.getElementById('test3'))
+  // React裡面的 ... 是作為一個批量傳遞的作用
+  </script>
+  </body>
+</html>

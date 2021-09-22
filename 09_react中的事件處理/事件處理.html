@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>jsx語法規則</title>
+</head>
+  <body>
+  <!-- 準備好一個 "容器" -->
+  <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
+  <div id="test"></div>
+
+  <!-- 引入 react 核心庫 -->
+  <script type="text/javascript" src="../js/react.development.js"></script>
+  <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
+  <script type="text/javascript" src="../js/react-dom.development.js"></script>
+  <!-- 引入 babel, 用於將 jsx 專為 js -->
+  <script type="text/javascript" src="../js/babel.min.js"></script>
+
+  <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+  // 1. 創建組件
+  class Demo extends React.Component{
+      /*
+       * (1). 通過 onXxxx 屬性指定事件處理函數 (注意大小寫)
+             a. React 使用的是自定義 (合成) 事件，而不是使用的原生 DOM 事件 -- 為了更好的兼容性
+             b. React 中的事件是通過事件委託方式處理的 (委託給組件最外層的元素) -- 為了高效
+         (2). 通過 event.target 得到發生事件的 DOM元素對象 -- 不要過度使用 ref
+       */
+      // 創建 ref 容器
+      myRef = React.createRef()
+      myRef2 = React.createRef()
+
+      // 展示左側輸入框的數據
+      showData = () =>{
+          alert(this.myRef.current.value);
+          //const {input1} = this // = this 代表從實例自身上取得 input1 
+          //alert(input1.value)
+      }
+
+      //展示右側輸入框的數據
+      showData2 = (event)=>{
+          // const {input2} = this
+          alert(event.target.value);
+      }
+      // 回調函數必須滿足三個特點：1. 你定義的函數 2. 你沒調用 3. 函數最終執行了
+      render(){ // render 里面的 this 是组件的實例對象
+          return( // 把 ref 當前所處的節點掛在實例 this 的自身上，並且取得名字叫 input1
+              <div> 
+              {/* 當前 ref 所在的 input 節點，直接存儲到 myRef 裡面
+               所以 this.myRef 代表存儲的容器，並不是一個回調函數，所以 input 被存儲到該容器裡
+               */}
+              <input ref={this.myRef} type="text" placeholder="點擊按鈕提示數據"/>&nbsp;
+              <button onClick={this.showData}> 點我提示左側數據 </button>&nbsp;
+              <input onBlur={this.showData2} type="text" placeholder="失去焦點提示數據"/>&nbsp;
+              {/* 發生事件的元素，正好是你要操作的那個元素，就可以省略 ref，  */}
+              </div> // onBlur 點擊失去焦點提示
+              // ref 等於一個函數， 它會幫你調用函數 和 把 ref 當前的節點傳進函數作為實参，再接收到 c ， 所以實例 this.input = c
+          )
+      }
+  }
+  // 渲染組件到頁面
+  ReactDOM.render(<Demo a="1" b="2"/>,document.getElementById('test'))
+  // 只要傳遞標籤屬性，props 就會收集成對象放在 props 屬性裡面 
+  
+  </script>
+  </body>
+</html>

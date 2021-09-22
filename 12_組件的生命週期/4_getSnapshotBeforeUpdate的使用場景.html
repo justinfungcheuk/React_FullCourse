@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>4_getSnapshotBeforeUpdate的使用場景</title>
+    <style>
+        .list{
+            width: 200px;
+            height: 150px;
+            background-color: skyblue;
+            overflow: auto;
+        }
+        .news{
+            height: 30px;
+        }
+        </style>
+</head>
+  <body>
+  <!-- 準備好一個 "容器" -->
+  <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
+  <div id="test"></div>
+
+  <!-- 引入 react 核心庫 -->
+  <script type="text/javascript" src="../js/17.0.1/react.development.js"></script>
+  <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
+  <script type="text/javascript" src="../js/17.0.1/react-dom.development.js"></script>
+  <!-- 引入 babel, 用於將 jsx 專為 js -->
+  <script type="text/javascript" src="../js/17.0.1/babel.min.js"></script>
+
+  <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+  // 1. 創建組件 
+  class NewsList extends React.Component{
+
+    state = {newsArr:[]} // 每一項都是一條新聞
+
+    componentDidMount(){ // 組件一掛載每隔一秒鐘就回來一條
+        setInterval(() => {
+            //獲取原狀態
+            const {newsArr} = this.state
+            // 模擬一條新聞
+            const news = '新聞'+ (newsArr.length+1)
+            // 更新狀態
+            // 把一個數組交給 newsArr，數組的樣子是：前面是新生成的 news, 後面是之前的數組 ...newsArr
+            this.setState({newsArr:[news,...newsArr]})
+        }, 1000);
+    }
+
+    getSnapshotBeforeUpdate(){
+        return this.refs.list.scrollHeight // 把它的內容區高度往下傳
+    }
+
+    // 把內容傳給 componentDidUpdate
+    componentDidUpdate(preProps,preState,height){ // 之前的內容
+        // his.refs.list.scrollTop 代表動態的調整 list 內容區往上串多少
+        this.refs.list.scrollTop +=  this.refs.list.scrollHeight - height
+        // += 符號代表是持續的往上串，因為不停有新的新聞傳進來，而不是串一位
+        // this.refs.list.scrollHeight 拿到現在新的新聞出現的高度，再減去 height 之前的高度，就是它們之間的差值
+    }
+
+      render(){
+          return(
+              <div className="list" ref="lsit"> {/** 臨時使用字符串的形式 ref="lsit" */}
+              { //拿到的都是一個新聞，用小寫代替
+                  this.state.newsArr.map((n, index)=>{ //動態的遍歷
+                    // key 每個人都是唯一的，所以要用 index 來做唯一的標識
+                    return <div key={index} className="news">{n}</div>
+                  })
+              }
+              </div>
+          )
+      }
+  }
+  ReactDOM.render(<NewsList/>,document.getElementById('test'))
+  </script>
+  </body>
+</html>

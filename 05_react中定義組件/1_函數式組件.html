@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>1_函數式組件</title>
+</head>
+  <body>
+  <!-- 準備好一個 "容器" -->
+  <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
+  <div id="test"></div>
+
+  <!-- 引入 react 核心庫 -->
+  <script type="text/javascript" src="../js/react.development.js"></script>
+  <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
+  <script type="text/javascript" src="../js/react-dom.development.js"></script>
+  <!-- 引入 babel, 用於將 jsx 專為 js -->
+  <script type="text/javascript" src="../js/babel.min.js"></script>
+
+  <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+  // 'use strict' 是嚴格模式，在babel 翻譯以下代碼之後， 是禁止以下自定義的 MyComponent 的 this 指向 window， 所以該 this 它是 undefined
+  // 1. 創建函數式組件
+  function MyComponent(){ //定義函數，必須大寫
+      console.log(this); // 此處的 this 是 undefined，因為 bael 編譯後開啟了嚴格模式
+      return <h2>我是用函數定義的組件（適用於【簡單組件】的定義）</h2> // 函數 必須有 返回值
+  }
+  // 2. 渲染組件到頁面
+  ReactDOM.render(<MyComponent/>,document.getElementById('test')) //組件標籤，不可直接寫組件的名字
+  //觸發 React 去找到函數 MyComponent，調用它來拿到返回值 return，轉為真實DOM，呈現到頁面！！！！
+  /**
+  執行了 ReactDOM.render(<MyComponent/>,document.getElementById('test')) 之後，發生了什麼？
+  1. React 解析組件標籤，找到了 MyComponent 組件。
+  2. 發現組件是使用函數定義的，隨後調用該函數，將返回的虛擬DOM轉為真實DOm，隨後呈現在頁面中。
+   */
+  </script>
+  </body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>3_react生命周期(新)</title>
+</head>
+  <body>
+  <!-- 準備好一個 "容器" -->
+  <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
+  <div id="test"></div>
+
+  <!-- 引入 react 核心庫 -->
+  <script type="text/javascript" src="../js/17.0.1/react.development.js"></script>
+  <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
+  <script type="text/javascript" src="../js/17.0.1/react-dom.development.js"></script>
+  <!-- 引入 babel, 用於將 jsx 專為 js -->
+  <script type="text/javascript" src="../js/17.0.1/babel.min.js"></script>
+
+  <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+
+  // 1. 創建组件
+  class Count extends React.Component{
+      /**
+       1. 初始化阶段: 由ReactDOM.render()触发---初次渲染
+          1.	constructor()
+          2.	getDerivedStateFromProps 
+          3.	render()
+          4.	componentDidMount() ====》常用
+- 一般在這個鉤子中做一些初始化的事，例如：開啟定時器，發送網絡請求，訂閱消息
+	
+
+
+          2. 更新阶段: 由组件内部this.setSate()或父组件重新render触发
+          1.	getDerivedStateFromProps
+          2.	shouldComponentUpdate()
+          3.	render()
+          4.	getSnapshotBeforeUpdate
+          5.	componentDidUpdate()
+	
+          3. 卸载组件: 由ReactDOM.unmountComponentAtNode()触发
+          1. componentWillUnmount() ====> =====》常用
+- 一般在這個鉤子中做一些收尾的事，例如：關閉定時器，取消訂閱消息
+       */
+
+      //構造器
+      constructor(props){ // 構造器是做初始化的東西
+          console.log('Count---constructor');
+          super(props)
+          //初始化狀態
+          this.state = {count:0}
+      }
+
+      
+      //加 1 按鈕的回調
+      add = ()=>{
+          //獲取原狀態
+          const {count} = this.state
+          //更新狀態
+          this.setState({count:count+1})
+      }
+
+      //卸載組件按鈕的回調
+      death = ()=>{
+          ReactDOM.unmountComponentAtNode(document.getElementById('test')) //卸載組件
+      }
+
+      //強制更新按鈕的回調
+      force = ()=>{
+          this.forceUpdate()
+      }
+
+      // 若 state 的值在任何時候都取決於 props，那麼可以使用 getDerivedStateFromProps
+    
+      static getDerivedStateFromProps(props,state){ // 加上 static 代表它是 靜態方法
+        // state 代表是由初始狀態的 this.state = {count:0} 傳遞到該 state
+
+        // 必須返回 狀態對象 state Obj （狀態對象的意思是要在 初始化狀態的 this.state 裡面的東西）或者 null
+          console.log('getDerivedStateFromProps',props, state);
+          return null
+          // return props // 當 return props 時，在這個位置代表當作一個狀態在使用，因為該 state狀態 它是從 props 中得到的
+      }
+
+      //在更新之前獲取快照 ====》 不常用
+      getSnapshotBeforeUpdate(){
+          console.log('getSnapshotBeforeUpdate');
+          return 'aiguigu'
+      }
+      
+
+      //組件掛載完畢的鉤子
+      componentDidMount(){
+          console.log('Count---componentDidMount');
+      }
+
+      //組件將要卸載的鉤子
+      componentWillUnmount(){
+          console.log('Count---componentWillUnmount');
+      }
+
+      //控制組件更新的‘閥門’，開啟該步驟才可以繼續向下一個步驟運行
+      shouldComponentUpdate(){
+          console.log('Count---shouldComponentUpdate');
+          return true
+      }
+
+      //組件更新完畢的鉤子
+      componentDidUpdate(preProps,preState,snapshotValue){
+        console.log('Count---componentDidUpdate',preProps,preState,snapshotValue);
+      }
+
+      render(){
+          console.log('Count---render');
+          const{count} = this.state
+          return(
+              
+              <div>
+              <h2>當前求和為: {count}</h2>
+              <button onClick={this.add}>點我+1</button>
+              <button onClick={this.death}>卸載組件</button>
+              <button onClick={this.force}>不更改任何狀態中的數據，強制更新一下</button>
+              </div>
+          )
+      }
+}
+  //渲染組件
+  ReactDOM.render(<Count count={199}/>,document.getElementById('test'))
+  // 該渲染的 count="199" 的值，是在 static getDerivedStateFromProps(props,state) 裡面的 props
+  // 而它所 return 的 props 也就是 count="199"
+  </script>
+  </body>
+</html>

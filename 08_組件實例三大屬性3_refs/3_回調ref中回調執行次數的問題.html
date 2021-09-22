@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>3_回調ref中回調執行次數的問題</title>
+</head>
+  <body>
+  <!-- 準備好一個 "容器" -->
+  <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
+  <div id="test"></div>
+
+  <!-- 引入 react 核心庫 -->
+  <script type="text/javascript" src="../js/react.development.js"></script>
+  <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
+  <script type="text/javascript" src="../js/react-dom.development.js"></script>
+  <!-- 引入 babel, 用於將 jsx 專為 js -->
+  <script type="text/javascript" src="../js/babel.min.js"></script>
+
+  <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+  // 1. 創建組件
+  class Demo extends React.Component{
+
+      state = {isHot:false}
+
+      showInfo = ()=>{
+          const {input1} = this
+          alert(input1.value)
+      }
+
+      changeWeather = ()=>{
+          // 獲取原來的狀態
+          const {isHot} = this.state
+          // 更新狀態
+          this.setState({isHot:!isHot})
+      }
+
+      saveInput = (c)=>{
+          this.input1 = c // 把接到的節點 c 傳到 input1 上
+          console.log('@',c);
+      }
+
+      render(){
+          const {isHot} = this.state
+          return(
+              <div>
+              <h2>今天天气很好{isHot ? '炎热':'凉爽'}</h2>
+              {/* <input ref={(c)=>{this.input1 = c;console.log('@',c);}} type="text"/><br/><br/> 
+              該種是回調函數的 ref 是內聯函數
+              它是直接把函數寫出來
+              */}
+              <input ref={this.saveInput} type="text"/><br/><br/> 
+              {/* 類的 ref 綁定函數
+              該種回調函數是沒有把函數直接寫出來，而是把函數放在了實例的自身，所以不再是一個新的函數
+               */}
+              <button onClick={this.showInfo}>點我提示輸入的數據</button>
+              <button onClick={this.changeWeather}>點我切換天氣</button>
+              </div>
+          )
+      }
+  }
+  // 渲染組件到頁面
+  ReactDOM.render(<Demo/>,document.getElementById('test'))
+  // 只要傳遞標籤屬性，props 就會收集成對象放在 props 屬性裡面 
+  </script>
+  </body>
+</html>

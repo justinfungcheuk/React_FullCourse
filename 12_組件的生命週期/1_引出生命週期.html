@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>1_引出生命週期</title>
+</head>
+  <body>
+  <!-- 準備好一個 "容器" -->
+  <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
+  <div id="test"></div>
+
+  <!-- 引入 react 核心庫 -->
+  <script type="text/javascript" src="../js/react.development.js"></script>
+  <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
+  <script type="text/javascript" src="../js/react-dom.development.js"></script>
+  <!-- 引入 babel, 用於將 jsx 專為 js -->
+  <script type="text/javascript" src="../js/babel.min.js"></script>
+
+  <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+  // 創建組件
+  // 生命週期回調函數 = 生命週期鈎子函數 = 生命週期函數 = 生命週期鉤子
+  class Life extends React.Component{
+
+      state = {opacity:1}
+
+      death = ()=>{
+          
+
+          //卸载组件 - 在那個節點的組件要被卸載
+          ReactDOM.unmountComponentAtNode(document.getElementById('test'))
+      }
+
+      // 組件掛載完畢 React 幫你調
+      componentDidMount(){
+        /*
+           * 每隔 200 毫秒都要去狀態裡面取一下現在的透明度是多少
+           把當前的透明度減少 0.1，然後再用 setState 把減完 0.1 的值再賦回去 state={opacity:1}
+           */
+          this.timer = setInterval(() => { // setInterval 定時器的 id 掛在 this 代表實例Life 組件自身上
+               // 獲取原狀態
+               let {opacity} = this.state
+               // 減小 0.1
+               opacity -= 0.1
+               // 如果透明度比 0 還小 或者等於 0，就直接變成 1
+               if(opacity <= 0) opacity = 1 
+               // 設置新的透明度
+               this.setState({opacity})
+           },200);
+      }
+
+      // 組件將要卸載 React 幫你調
+      componentWillUnmount(){
+          //清除定時器
+          clearInterval(this.timer)
+      }
+
+      // render 調用的時機：初始化渲染頁面的展示，狀態更新之後
+      render(){
+          console.log('render');
+          return(
+          <div>
+          <h2 style={{opacity:this.state.opacity}}>React學不會怎麼辦</h2>
+          <button onClick={this.death}>不活了</button>
+          </div>
+          )
+      }
+  }
+  // 渲染組件
+  ReactDOM.render(<Life/>,document.getElementById('test'))
+  
+  </script>
+  </body>
+</html>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>jsx語法規則</title>
+    <title>1_Diffing算法</title>
 </head>
   <body>
   <!-- 準備好一個 "容器" -->
@@ -19,8 +19,34 @@
   <script type="text/javascript" src="../js/17.0.1/babel.min.js"></script>
 
   <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
-  // 1. 創建虛擬 DOM = Virtual DOM
-  
+  // 1. 創建組件
+  class Time extends React.Component {
+      state = {date: new Date()}
+
+      componentDidMount (){ // 組件一掛載就開始循環定時器，每隔 1 秒就更新一下狀態，而且每次都把最新的時間放進去
+          setInterval(() => {
+              this.setState({
+                  date: new Date()
+              })
+          }, 1000);
+      }
+
+  render () {
+      return (
+          <div>
+          <h1>hello</h1> {/** 真實 DOM */}
+          <input type="text"/>
+          {/** this.state.date 讀出來的時間 */}
+          <span>現在是: {this.state.date.toTimeString()}</span> 
+          {/** DOM的Diffing算法最小的比較是標籤，也就是節點。 所以 span標籤是DOM Diffing算法
+            而且 Diffing 的算法是逐層對比
+        */}
+          </div>
+      )
+  }
+}
+
+  ReactDOM.render(<Time/>,document.getElementById('test'))
   </script>
   </body>
 </html>

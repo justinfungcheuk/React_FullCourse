@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>1_類的基本知識</title>
+</head>
+  <body>
+  <script type="text/javascript">
+  /*
+   總結：
+   1. 類中的構造器不是必須寫的，要對實例進行一些初始化的操作，如添加指定屬性時才寫。
+   2. 如果 A類 繼承了 B類，且 A類 中寫了構造器， 那麼 A類 構造器中的 super 是必須要調用的
+   3. 類中所定義的方法，都是放在了類的原型對象上，供實例去使用
+   */
+
+  // 創建一個Person的類
+  class Person { // 在類class裡面分有 屬性 和 方法
+      //構造器方法
+      constructor(name,age){
+          // 構造器中的this 是誰？- 類的實例對象
+          this.name = name
+          this.age = age
+          this.school = '尚硅谷'
+      }
+      // 一般方法
+      speak(){
+          // speak 方法放在了哪裏？- 類的原型對象上，供實例使用
+          // 通過 Person 實例調用speak時，speak中的this 就是Perison實例
+          console.log(`我是${this.name}，我的年齡是${this.age}`);
+          
+      }
+  }
+  // 創建一個Person的實例對象
+  const p1 = new Person('tom',18)
+  const p2 = new Person('jerry',19)
+  
+  console.log(p1);
+  console.log(p2);
+  p1.speak()
+  p2.speak()
+
+
+
+  //創建一個Student類，繼承於Person類
+  class Student extends Person { // extends 代表 Student 把 Person繼承了，所以它不用再寫Person裡有的構造器,除非需要創建新的函數（）
+  constructor(name, age, grade){
+      // super 必須放在最前面使用，否則會報錯
+      super(name,age) // 可以透過 super 把 Student 和 Person 共有的屬性傳遞過去
+      this.grade = grade
+      // 定義了一個 Student 的類，還有繼承了 Person，而Student裡面也寫了構造器，當你符合該三個條件後，你的構造器必須調用super，不調用就會報錯，因為這是類的語法
+  }
+  // 重寫從父類繼承過來的方法
+  speak(){
+      console.log(`我是${this.name}，我的年齡是${this.age}，我讀的是${this.grade}年級`);
+      this.study()
+  }
+  study(){
+      // study 方法放在了哪裏？- 類的原型對象上，供實例使用
+      // 通過 Student 實例調用study時，study中的this 就是Student實例
+      console.log('我很努力的學習');
+  }
+  }
+
+  class Car {
+      constructor(name,price){
+          this.name = name
+          this.price = price
+        // this.wheel = 4
+      }
+      // 類中可以直接寫賦值語句，如下代碼的含義是：給 Car 的實例對象添加一個屬性， 名為 a，值為 1
+      a = 1
+      wheel = 4
+      static demo = 100 // 把自身的類 Car 加上一個demo的值等於 100
+  }
+
+  const c1 = new Car('奔馳c63',199)
+  console.log(c1);
+  consoel.log(Car.demo);
+  </script>
+  </body>
+</html>
