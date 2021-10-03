@@ -10,27 +10,33 @@
   <script type="text/javascript">
   let arr1 = [1,3,5,7,9]
   let arr2 = [2,4,6,8,10]
-  console.log(...arr1); // 展開一個數組
+  console.log(...arr1); // 展開一個數組，分別輸出 1 3 5 7 9， 而直接使用 (arr1) 則輸出一個數組 [1,3,5,7,9]
   let arr3 = [...arr1,...arr2] // 連接數組
+  console.log(arr3);
   
-  // 在函數中使用
-  function sum(...numbers){
-     return numbers.reduce((preValue,currentValue)=>{
-         return preValue + currentValue
+  // 函數傳参，在函數中使用
+  function sum(...numbers){ // ...numbers 可以批量的把所有的參數都接收到
+    // reduce 傳遞一個參數（這個參數是函數，這個函數接收兩個參數）一個是之前的值 preValue,一個是當前的值 currentValue
+     return numbers.reduce((preValue,currentValue)=>{ // reduce 方式是有返回值的，能把整個數組求和的值最終給妳，所以要做 sum 的返回值 return
+         return preValue + currentValue 
      })
-  }
+  } // [] 數組身上的方法很重要！！！
   console.log(sum(1,2,3,4));
 
+
+
+   
   //構造字面量對象時使用展開語法
   let person = {name:'tom',age:18}
-  let person2 = {...person}
-  //console.log(..person); //報錯， 展開運算符不能展開對象
+  let person2 = {...person} // 外面使用 中括號 {...person} 觸發了一個東西，就是字面量的形式，代表複製一個對象
+  //console.log(..person); //報錯， （...person) 小括號， 展開運算符 ... 不能直接遍歷一個對象
+  // 因為直接寫 (...person) 運算符，是想用展開運算符展開對象，是不能夠實現的，無法展開，
   person.name = 'jerry'
-  console.log(person2);
+  console.log(person2); // 複製 person 對象
   console.log(person);
 
   // 合併
-  let person3 = {...person,name:'jack', address:'地球'}
+  let person3 = {...person,name:'jack', address:'地球'} // 複製對象的同時也更改了它的屬性
   console.log(person3);
   </script>
   </body>

@@ -21,16 +21,32 @@
   <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
   // 1. 創建組件
   class Demo extends React.Component{
-      /*
-       React.createRef 調用後可以返回一個容器，該容器可以存儲被 ref 所標識的節點，該容器是“專人專用”的
+      /* React.createRef() 是一個函數 
+       React.createRef 調用後可以返回一個容器，該容器可以存儲被 ref 所標識的那些節點，該容器是“專人專用”的
+       也就是說，我創建了一個容器 React.createRef()，而該容器掛在了實例 myRef 的自身上，
+
+       而專人專用的意思是：React.createRef() 只能存儲一個節點
+       而後放進去的節點，會替代之前的節點
        */
-      myRef = React.createRef()
+      myRef = React.createRef() // 給 Demo類 的實例對象 加上一個 myRef屬性，值為 React.createRef() - 調用 React的API，
       myRef2 = React.createRef()
       // 展示左側輸入框的數據
       showData = () =>{
+
           alert(this.myRef.current.value);
+
           //const {input1} = this // = this 代表從實例自身上取得 input1 
           //alert(input1.value)
+          
+          /**
+           * 當你點擊按鈕提示左側數據
+           * 因為容器 React.createRef()，存儲了 節點input，我們要節點的 value 值
+           * 容器所輸出的是 {current:input}，也就是專門用於存儲，被 ref 所標識的節點的那個容器
+           * 而我們想要取得 input，就需要透過 key 來取得 value
+           * 所以當我們想要取得節點input，就要用該代碼 this.myRef.current 就可以拿到 input 的節點
+           * 而想要拿到它的 value 值，就要該代碼 this.myRef.current.value
+           * 而且 current 的屬性也不能改，因為是 React 的語法
+           */
       }
 
       //展示右側輸入框的數據
@@ -45,7 +61,15 @@
               {/* 當前 ref 所在的 input 節點，直接存儲到 myRef 裡面
                所以 this.myRef 代表存儲的容器，並不是一個回調函數，所以 input 被存儲到該容器裡
                */}
-              <input ref={this.myRef} type="text" placeholder="點擊按鈕提示數據"/>&nbsp;
+              <input ref={this.myRef} type="text" placeholder="點擊按鈕提示數據"/>&nbsp; 
+              {/* 要加上 this 因為 myRef 是放在實例自身上的，所以要加上 this */}
+                
+                {/**
+                 * 當你寫了 ref，而且你是用了 create 所創建出來的一個容器 React.createRef()，該代碼會做出以上事件
+                 * - 把當前的 ref，所在的那個節點 input，直接存儲到該容器 {this.myRef} 裡面，
+                 * - 所以 {this.myRef} 不是函數，而是用了 React 最新的 API，React.createRef() 生成了一個容器，容器專門用於存儲被 ref 所標識的那些節點
+                 * 所以 input 被存儲到 this.myRef 裡面
+                */}
               <button onClick={this.showData}> 點我提示左側數據 </button>&nbsp;
               <input onBlur={this.showData2} ref={this.myRef2} type="text" placeholder="失去焦點提示數據"/>&nbsp;
               
@@ -57,6 +81,12 @@
   // 渲染組件到頁面
   ReactDOM.render(<Demo a="1" b="2"/>,document.getElementById('test'))
   // 只要傳遞標籤屬性，props 就會收集成對象放在 props 屬性裡面 
+
+  /**
+   * 總結：
+   * 要往裡面存儲東西，必須先創建一個容器 React.createRef()，而且要把該容器放到實例myRef自身上 
+   * 而如果要把當前節點存儲進去，必須要在節點上寫該代碼 ref={this.myRef}
+   */
   </script>
   </body>
 </html>

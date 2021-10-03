@@ -37,7 +37,7 @@
       }
 
       saveInput = (c)=>{
-          this.input1 = c // 把接到的節點 c 傳到 input1 上
+          this.input1 = c // 把接到的節點 c 掛到 input1 上
           console.log('@',c);
       }
 
@@ -45,14 +45,33 @@
           const {isHot} = this.state
           return(
               <div>
+              {/** ref={(c)}=>{this.input1=c}，該函數能夠執行多少次？？？
+
+            */}
               <h2>今天天气很好{isHot ? '炎热':'凉爽'}</h2>
-              {/* <input ref={(c)=>{this.input1 = c;console.log('@',c);}} type="text"/><br/><br/> 
-              該種是回調函數的 ref 是內聯函數
-              它是直接把函數寫出來
+              {/* <input ref={(c)=>{this.input1 = c;console.log('@',c);}} type="text"/><br/><br/>  內聯函數
+              該種是回調函數的 ref 是內聯函數 - 用的比較多在程序開發!!!!!!!!!!!!!
+              它是直接把函數寫出來，所以稱為內聯函數
+
+              頁面初次上來的時候，會幫你寫上回調 ref 的那個回調，和幫你幫當前的節點給妳傳進去了 - 這是第一次渲染的時候
+              所以當第一次更新組件的時候，會被調兩次，第一次是 null，第二次是當前的節點
               */}
+
+              {/**
+                當你點擊 點我切換天氣 按鈕，就會更改狀態
+                當狀態一發生更改，狀態就會驅動頁面顯示，
+                而狀態會怎麼驅動頁面顯示呢？我們要重新調用 render 才可以，
+                所以當 render 重新執行，函數式的 ref 也會執行一次，
+                因此它就會更新了函數。
+                第一次調就會得到 null，第二次調就會把當前的節點input 放進來
+               */}
               <input ref={this.saveInput} type="text"/><br/><br/> 
-              {/* 類的 ref 綁定函數
-              該種回調函數是沒有把函數直接寫出來，而是把函數放在了實例的自身，所以不再是一個新的函數
+              {/* 類的 ref 內綁定函數
+              該種回調函數是沒有把函數直接寫出來，而是把函數放在了實例的自身(this.)，
+              也能接到參數 c
+
+              - 而且 ref 的綁定函數，不會頻繁的調用 saveInput，因為已經放在實例自身上 this.saveInput，
+              - 所以就算它以後重新調用 render，它也會找到自身的實例 this.saveIput，因為之前調過，不再是一個新的函數
                */}
               <button onClick={this.showInfo}>點我提示輸入的數據</button>
               <button onClick={this.changeWeather}>點我切換天氣</button>

@@ -12,49 +12,69 @@
    總結：
    1. 類中的構造器不是必須寫的，要對實例進行一些初始化的操作，如添加指定屬性時才寫。
    2. 如果 A類 繼承了 B類，且 A類 中寫了構造器， 那麼 A類 構造器中的 super 是必須要調用的
-   3. 類中所定義的方法，都是放在了類的原型對象上，供實例去使用
+   3. 類中所定義的方法，都是放在了類的原型對象上，供實例去使用。 例如： speak(){} 和 study(){} 都是放在原型對象上的
    */
+
+
 
   // 創建一個Person的類
   class Person { // 在類class裡面分有 屬性 和 方法
-      //構造器方法
-      constructor(name,age){
+      //構造器方法 「在 class 裡面，為了接著 new 所傳過來的參數，要有構造器 constructor」
+      constructor(name,age){ // 把 name 和 age 放到實例自身 （實例是 const p1 = new Person('tom',18)）
           // 構造器中的this 是誰？- 類的實例對象
+          // 而究竟是那個實例對象呢？ 要看當時所 new 的是誰來決定。在本節課當中所指的就是 p1 和 p2 
           this.name = name
           this.age = age
-          this.school = '尚硅谷'
+          
       }
-      // 一般方法
-      speak(){
-          // speak 方法放在了哪裏？- 類的原型對象上，供實例使用
-          // 通過 Person 實例調用speak時，speak中的this 就是Perison實例
+      // 一般方法 - speak 是 類中的一般方法
+      // 一般方法是什麼呢？ 就是除了構造器方法以外，程序員根據業務場景需要所寫的都稱為一般方法
+      speak(){ // speak 就是代表人能說話的方法
+          // speak 方法放在了哪裏？- 在 Person 這個 class類 的原型對象上，供實例使用（因為它是放在了原型對象上的 和 是通過 p1 和 p2 該兩個實例所調用的，所以要供實例使用）
+          // 通過 Person 實例調用speak時，speak中的this 就是Person實例
           console.log(`我是${this.name}，我的年齡是${this.age}`);
+          // 在這裡的 this 是誰呢？ 就是 p1 或 p2，具體要看誰點的speak
+          // 所以 p1 或 p2 就是 person 實例
           
       }
   }
   // 創建一個Person的實例對象
-  const p1 = new Person('tom',18)
+  const p1 = new Person('tom',18)  // p1 是 Person 的實例對象 ===》 Person {}, 當中的 中括號{} 代表實例對象，Person 則代表你這個實例對象是由誰 new 出來的
+  // const p1 = new Person('tom',18)， 輸出的是一個 實例對象，而該實例對象是由 Person 的類 所 new  出來的
+  // 因此 p1 輸出的 Person{} , 前面的 Person 代表締造者
   const p2 = new Person('jerry',19)
   
   console.log(p1);
   console.log(p2);
   p1.speak()
   p2.speak()
+  p1.speak.call({a:1,b:2}) // 透過 call 調用 p1.speak，而 call 有一個重要的功能就是可以更改 函數裡的 this 指向，你傳什麼就改什麼
+  // 所以 call 更改了 ({a:1,b:2}) 的 this 指向， speak 的 this.name 和 this.age 都變成了 undefind
+  // 因此 speak 的 this 到底是誰，要看你是怎麼調用的
 
 
 
   //創建一個Student類，繼承於Person類
   class Student extends Person { // extends 代表 Student 把 Person繼承了，所以它不用再寫Person裡有的構造器,除非需要創建新的函數（）
-  constructor(name, age, grade){
-      // super 必須放在最前面使用，否則會報錯
-      super(name,age) // 可以透過 super 把 Student 和 Person 共有的屬性傳遞過去
+  constructor(name, age, grade){ // 因為 studnet 獨有 grade，所以要重新寫一個新的 構造器
+    /* 當你符合該三個條件，你的構造器中，必須調用 super，不調用就會報錯，這是類的一個語法，不允許不寫 super
+    1. 定義了 student 的類（也就是一個新的類）
+    2. 繼承了 Person （也就是繼承了上一個類）
+    3. 而它們的裡面也寫了一個構造器 constructor
+    */
+    // super 必須放在最前面使用，否則會報錯
+      super(name,age) // 可以透過 super 把 Student 和 Person 共有的屬性透過 構造器 constructor 傳遞過去
       this.grade = grade
       // 定義了一個 Student 的類，還有繼承了 Person，而Student裡面也寫了構造器，當你符合該三個條件後，你的構造器必須調用super，不調用就會報錯，因為這是類的語法
+
+      this.school = '尚硅谷' //該句編碼的意思是：所有由 Student 締造的實例，身上都有一個屬性，名為 school，值為 '尚硅谷'，所以就不需要再透過 s1 實例傳遞和接到 constructor 裡面
+      // 所以所有由 Student 締造的學生，都是尚硅谷這個學校的，所以就可以寫成 this.school = '尚硅谷'
   }
   // 重寫從父類繼承過來的方法
   speak(){
       console.log(`我是${this.name}，我的年齡是${this.age}，我讀的是${this.grade}年級`);
-      this.study()
+      this.study() // 誰能調到 study() 呢？因為 study 方法 是給實例使用的，我們不能直接寫 study()直接調用，否則會報錯
+      // 我們應該透過實例來使用，而 speak() 當中的 this 剛好是它的實例對象，所以我們可以透過 this.study() 來調用 study
   }
   study(){
       // study 方法放在了哪裏？- 類的原型對象上，供實例使用
@@ -63,21 +83,30 @@
   }
   }
 
+  const s1 = new Student('小張', 15, '高一')
+  console.log(s1);
+  s1.speak()
+  s1.study()
+
+  // 2_state的簡寫方式的引導
   class Car {
       constructor(name,price){
           this.name = name
           this.price = price
         // this.wheel = 4
       }
-      // 類中可以直接寫賦值語句，如下代碼的含義是：給 Car 的實例對象添加一個屬性， 名為 a，值為 1
+      // 類中可以直接寫賦值語句，如下代碼的含義是：往實例自身上追加一個屬性， 名為 a，值為 1
+      // 也就是說 類中可以直接寫賦值語句，如下代碼的含義是：給 Car 的實例對象添加一個屬性， 名為 a，值為 1
       a = 1
       wheel = 4
-      static demo = 100 // 把自身的類 Car 加上一個demo的值等於 100
+      static demo = 100 // 把自身的類 Car 加上一個demo的屬性值等於 100
+      // 當加上 靜態的 static，demo 就不再加給 Car 的實例，而是加給這個類本身
+      // 
   }
-
+  // 如果初始化的屬性的值是從外部傳過來的，構造器必須寫上，因為你要接，否則可以直接寫賦值語句
   const c1 = new Car('奔馳c63',199)
   console.log(c1);
-  consoel.log(Car.demo);
+  console.log(Car.demo);
   </script>
   </body>
 </html>

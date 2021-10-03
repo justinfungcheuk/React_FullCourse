@@ -17,7 +17,7 @@
   <script type="text/javascript" src="../js/react-dom.development.js"></script>
 
 
-  <script type="text/javascript"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+  <script type="text/javascript"> // 該部分一定要寫 type="text/javascript" 是表示裡面寫的是 js,
   // 1. 創建虛擬 DOM = Virtual DOM
   const VDOM = React.createElement('h1',{id:'title'},React.createElement('span',{},'Hello,React')) /* 標籤名,標籤屬性,標籤內容 */
   // 2. 渲染虛擬 DOM 到頁面

@@ -29,6 +29,31 @@
       // 所以當我們用 類 去定義組件的時候，一般會在下面的語法做出限制，再寫下面的 render
 
 
+      /* constructor()
+      constructor(props)
+      - 如果不初始化 state 或不进行方法绑定，则不需要为 React 组件实现构造函数。
+      在 React 组件挂载之前，会调用它的构造函数。在为 React.Component 子类实现构造函数时，
+      应在其他语句之前前调用 super(props)。否则，this.props 在构造函数中可能会出现未定义的 bug。
+
+      如果
+      通常，在 React 中，構造函數僅用於以下兩種情況：
+      1. 通過給 this.state 賦值對象來初始化內容 state
+      2. 為事件處理函數綁定實例 例如： this.changeWeather = this.changeWeather.bind(this), 如果沒有這句話，我們自定義的 changeWeather(){}方法的this 就會被丟掉
+      或 者 我們也可以通過 自定義方法的賦值語句的形式+箭頭函數 也可以獲得 changeWeather(){} 的 this，所以用該方法構造器可不寫
+      */
+
+
+
+      /* 只要寫了構造器 constructor() 它的裡面必須要調用 super()
+      而如果接了 props 到 constructor(props) 和 傳了 props 到 super(props) 和 不接不傳 props 究竟有什麼區別呢？
+      區別在於： 
+      - 不接 props，代表你在構造器中已經沒有辦法通過 實例.props 取值。 實例.props = this.props
+      - 接了 props，代表你希望在類中通過實例來訪問 props
+
+      結論：！！！！！！！！！！！！！類中的構造器能省略就省略，我們程序員基本不寫！！！！！！！！！！！！！！！！！！！！！
+      - 構造器是否接收 props，是否傳遞給 super，取決於：是否希望在構造器中通過 this 訪問 props
+      // 但是以上的構造器方法在開發中是非常少用的，所以類中的構造器能省略就省略，幾乎不用該方法。
+      */
       constructor(props){
           // 構造器是否接收 props，是否傳遞給 super，取決於：是否希望在構造器中通過 this 訪問 props
 
@@ -36,9 +61,12 @@
 
           // console.log(props);
           super(props)
-          console.log('constructor',this.props);
+          // 如果直接寫 props，console.log('constructor',props); 則代表你接到什麼，就輸出什麼
+          console.log('constructor',this.props); // this.props 代表，輸出 this 實例自身 的那個 props
           // 在類中的構造器傳不傳 props，要視乎你希不希望在類中通過實例來訪問 props
       }
+
+      // static 也是給 類 自身加東西，在這裏是加了 propTypes 和 defaultProps
 
       //對標籤屬性進行類型，必要性的限制
       static propTypes = { // propTypes 是 React 裡面的規矩，只要為類加上自身的 propTypes 屬性，就是在加規則
@@ -58,17 +86,18 @@
       sex: '男', //sex默認值為男
       age:18 // age默認值為18
      }
-     // 以上的就是對標籤屬性進行限制以及默認值的指定
+     // 以上的就是對標籤屬性進行限制以及默認值的指定，該方式用的比較多，直接放到 類 裡面
      
 
-     // 如果該 Person 還有自己的狀態，可以用下面的語法
+     // 如果該 Person組件 它還有自己的狀態，可以用下面的語法：初始化狀態
      // state = {} 初始化狀態
 
+     
      
 
       render(){ // render 是 類 的一個方法
          // console.log(this);
-          const {name,age,sex} = this.props
+          const {name,age,sex} = this.props // // 從組件實例對象上的 props屬性 取出 name age sex，還可以把渲染組件到頁面的所有屬性收集到 this.props
           // props 是只讀的
           // this.props.name = 'jack' // 此行代碼會報錯，因為 props 是只讀的
 
@@ -81,6 +110,7 @@
           )
       }
   }
+  // 以上代碼都是定義組件相關的
 
   // 渲染組件到頁面
   ReactDOM.render(<Person name="jerry" speak={speak}/>,document.getElementById('test1'))
@@ -95,6 +125,13 @@
   function speak(){
       console.log('我說話了');
   }
+  //以上的代碼都是在用這個組件
+
+
+
+  /*總結：
+  1. 把兩個限制 propTypes 和 defaultTypes 從 類 的外則移到 類的裡面，利用了類的關鍵字 static
+  */
   </script>
   </body>
 </html>

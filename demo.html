@@ -8,12 +8,14 @@
 </head>
   <body>
   <script type="text/javascript">
-  function demo () {   
-      console.log(this);
+  function demo () { 
+    // ‘use strict’ 開啟嚴格模式 this 就變成 undefined
+      console.log(this); // 沒有開啟嚴格模式， this 是 window
   }
   demo()
-  const x = demo.bind({a:1,b:2})
-  x()
+  // .bind() 返回的是一個新函數
+  const x = demo.bind({a:1,b:2}) // 把新的函數交給了 x
+  x() // 調用函數，當調用時就會把 this 改成{a:1,b:2}
   </script>
   </body>
-</html>
+</html> 

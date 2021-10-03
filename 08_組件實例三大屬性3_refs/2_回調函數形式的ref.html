@@ -22,7 +22,7 @@
   // 1. 創建組件
   class Demo extends React.Component{
       showData = () =>{
-          const {input1} = this // = this 代表從實例自身上取得 input1 
+          const {input1} = this // = this 代表從實例自身上取得 input1，所以不用從 refs 取得 我們在這不再寫 this.refs
           alert(input1.value)
       }
 
@@ -31,11 +31,26 @@
           const {input2} = this
           alert(input2.value)
       }
-      // 回調函數必須滿足三個特點：1. 你定義的函數 2. 你沒調用 3. 函數最終執行了
+      /* ref={()=>{}} 回調函數必須滿足三個特點：1. 你定義的函數 2. 你沒調用 3. 函數最終執行了，有別的東西調用它了
+      - 回調函數能夠收到什麼參數？ 取決於函數的調用者
+
+      */
       render(){ // render 里面的 this 是组件的實例對象
           return( // 把 ref 當前所處的節點掛在實例 this 的自身上，並且取得名字叫 input1
-              <div> 
+              <div>
+              {/** 當我們寫的是 ref，React 會幫我們調用函數，還把當前 ref 所處的節點傳到 c 裡面作為實参， 再用 = c 代表收到它的節點*/}
               <input ref={c => this.input1 = c } type="text" placeholder="點擊按鈕提示數據"/>&nbsp;
+              {/** this.input1 = c 代表為了在頁面展示東西， 需要先 new 一個 demo 的實例，
+                   就是 React 要通過 demo 的實例，幫你調用 render，
+                   當幫你調用 render 的時候就會執行 render 裡面的 jsx
+                   而當執行 jsx 的時候，就會觸發裡面 input節點的 函數形式的 ref 執行起來 ref={c => this.input1 = c }
+                   當調用該函數的時候，也會幫你在所處的節點給妳傳到 a 裡面，就會拿到該節點 input
+                   - this.input = a 代表把這個節點放在了 組件實例自身上（也就是 this.），然後給它起了一個名字叫 input1
+                   而這個 this 是誰呢？因為它沒有自己的 this，要往外找，找到 render 的 this，而 render 的 this 就是組件的實例對象
+
+                總結：把ref當前所處的input節點，掛在實例自身上，並且取名為input1
+              */}
+              {/** 該回調函數的參數 c 正好是 ref屬性 所處的那個節點input */}
               <button onClick={this.showData}> 點我提示左側數據 </button>&nbsp;
               <input onBlur={this.showData2} ref={c => this.input2 = c } type="text" placeholder="失去焦點提示數據"/>&nbsp;
               

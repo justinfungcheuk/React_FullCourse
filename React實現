@@ -1,0 +1,5 @@
+React 實現
+數據 -》 虛擬DOM（Virtual-DOM）-》頁面真實DOM（True-DOM）
+
+
+- 組件的狀態裡存著數據，而數據的改變就會驅動頁面的展示 （頁面真實DOM（True-DOM））

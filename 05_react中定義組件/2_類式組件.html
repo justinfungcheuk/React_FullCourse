@@ -19,8 +19,11 @@
   <script type="text/javascript" src="../js/babel.min.js"></script>
 
   <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+// 組件的三大屬性：1. props 2. refs 3. state
+
   // 1. 創建類式組件 - 必須繼承 React 內置的類 = extends React.Component 和 必須結合 render 和 return 一起使用
-  class MyComponent extends React.Component {
+  // Mycomponent 繼承了 React.Component 的類，所以 MyComponent 也可以稱為組件，也就是稱為 MyComponent 組件實例對象
+  class MyComponent extends React.Component { // 類名 = 組件名
       render(){
           // render 是放在哪裏的？- MyComponent 的原型對象上，供實例使用
           // render 中的 this 是誰？- MyComponent 的實例對象 = MyComponent 組件實例對象
@@ -35,6 +38,8 @@
   1. React 解析組件標籤，找到了 MyComponent 組件。
   2. 發現組件是使用類定義的，隨後 new 出來該類的實例，並通過該實例調用到原型上的 render 方法。
   3. 將 render 返回的虛擬DOM 轉為真實DOM， 隨後呈現在頁面中。
+
+  state 是由 類 所締造的組件實例身上的
    */
   </script>
   </body>

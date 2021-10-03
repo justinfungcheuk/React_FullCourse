@@ -21,9 +21,26 @@
   }
 
   const p1 = new Person('tom',18)
+  // 實例.調用
   p1.study(); // 通過實例調用 study 方法
   const x = p1.study
-  x()
+  x() // 這是函數的直接調用
+  // 由於 類 中所定義的方法，已經在局部開好了嚴格模式，所以會導致 x() 不會指向 window，因此 x() 會變成 undefined
+
+
+  /*
+  function demo(){
+    'use strict' // 嚴格模式可以局部開啟，如該位置加在函數體裡面就只會是該函數體裡面才開啟嚴格模式，別的地方不會開啟
+    console.log(this);
+  }
+  demo() // 直接調用的 this 就會是 window - 而開啟嚴格模式的 this 就會是 undefined
+
+  function demo2(){
+    // 'use strict'
+    console.log(this);
+  }
+  demo() // 沒有開啟嚴格模式，直接調用， this 就會是 window
+  */
   </script>
   </body>
 </html>

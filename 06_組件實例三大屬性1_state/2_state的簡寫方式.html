@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>state</title>
+    <title>2_state的簡寫方式</title>
 </head>
   <body>
   <!-- 準備好一個 "容器" -->
@@ -19,22 +19,29 @@
   <script type="text/javascript" src="../js/babel.min.js"></script>
 
   <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+/**
+ * 總結：
+ * 1. 初始化狀態可以直接在 類 裡面寫上賦值語句： state = {} 對象
+ */
+
+
+
+
   // 1. 創建組件
   class Weather extends React.Component{
 
-      // 構造器調用幾次？ -- 1次
-      /* constructor(props){
-          console.log('constructor');
-          super(props) // 關於 this 的操作，必須放在 super 的後面
-          // 初始化狀態
-          // this.state = {isHot:false, wind:'微風'}
-          // 解決 changeWeather 中 this 指向問題
-          this.changeWeather = this.changeWeather.bind(this)
-      }
-      */
-
+      // this.state = {isHot:false, wind:'微風'} 我們想把所有的 Weather 實例對象身上都追加一個 state 的屬性，然後它的值都是一個對象，裡面都標識著天氣熱不熱和微風
+      // 所以我們可以直接寫上賦值語句：state = {isHot:false, wind:'微風'}，就是往 Weaher 的實例對象身上添加一個屬性名為 state，值為對象 {isHot:false, wind:'微風'}
       // 初始化狀態
       state = {isHot:false, wind:'微風'}
+
+
+
+
+      /* 為什麼 render 的 this 也是 Weather 的實例對象呢？
+      因為你寫的組件標籤 <Weather /> ， React 裡面一定做了該事情，它 new 了一個 Weather，所以它握住了這個實例
+      例如： const w1 = new Weather(), 所以拿著了這個 w1， 然後通過 w1.render 進行調用，所以說 render 裡的 this 也是 Weather 的實例對象
+      */ 
 
       // render 調用幾次？ -- 1+n次，1 是初始化的那次， n 是狀態更新的次數
       render(){
@@ -43,15 +50,15 @@
           return <h1 onClick={this.changeWeather}>今天天氣很{isHot?'炎熱':'涼爽'}</h1>  
       }
 
-      // changeWeather 調用幾次？ -- 點幾次調幾次
 
-      //自定義方法 - 要用賦值語法的形式（不能只寫小括號， 必須要賦值語句） + 箭頭函數
-      changeWeather = ()=>{ // 由於寫了上面的 this.changeWeather = this.changeWeather.bind(this) 這句話，
-      //所以 changeWeather(){} 裡面的 this 已經成功修改為 class Weather 的實例對象。
-          // changeWeather 放在了哪裏？- Weather 的原型對象上，供實例使用
-          // 由於 changeWeather 是作為 onClick 的回調，所以不是通過實例調用的，是直接調用的
-          // 類中的方法默認開啟了局部的嚴格模式，所以 changeWeather 中的 this 為 undefined
+      // changeWeather(){} 的自定義方法，基本上都是給事件作為回調去使用
 
+      // 箭頭函數有一大特點，就是沒有自己的 this，但是如果你在箭頭函數裡面使用了 this 這個關鍵字，它就會去找其外層函數的 this ，作為箭頭函數的 this 去使用
+      // 所以箭頭函數裡面的 this 就是組件的實例對象
+
+      // 自定義方法 - 要用賦值語句的形式 + 箭頭函數
+      //自定義方法 - 意味著以後程序員在用 類 創建一個組件的時候， 組件裡面的所有你自定義的方法都要用賦值語句的形式（不能只寫小括號， 必須要賦值語句） + 箭頭函數
+      changeWeather = ()=>{
           // 獲取原來的 isHot 值
           const isHot = this.state.isHot
           // 嚴重注意：狀態必須通過 setState 進行修改/更新，且更新是一種合併， 不是替換

@@ -21,7 +21,7 @@
   <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
   // 'use strict' 是嚴格模式，在babel 翻譯以下代碼之後， 是禁止以下自定義的 MyComponent 的 this 指向 window， 所以該 this 它是 undefined
   // 1. 創建函數式組件
-  function MyComponent(){ //定義函數，必須大寫
+  function MyComponent(){ //定義函數，必須大寫。 函數名 = 組件名
       console.log(this); // 此處的 this 是 undefined，因為 bael 編譯後開啟了嚴格模式
       return <h2>我是用函數定義的組件（適用於【簡單組件】的定義）</h2> // 函數 必須有 返回值
   }

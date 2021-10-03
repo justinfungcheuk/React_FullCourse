@@ -4,11 +4,12 @@
 <meta charset="UTF-8" />
 <title>Document</title>
 </head>
+<!-- 以下是原生事件綁定的 3 種方式 -->
 <body>
 <button id="btn1">按鈕1</button>
 <button id="btn2">按鈕2</button>
+<!-- 當點擊按鈕3的時候，就會把 "" 這兩個引號裡面的 js語句 拉出來執行，但前提必須保證要有 demo 的函數 -->
 <button onclick="demo()">按鈕3</button>
-
 <script type="text/javascript">
 const btn1 = document.getElementById('btn1')
 btn1.addEventListener('click',()=>{
@@ -20,6 +21,7 @@ btn2.onclick = ()=>{
     alert('按鈕2被點擊了')
 }
 
+// React 推薦使用以下的原生事件綁定， 並不推薦在 React 裡面使用 document.getElementById() 的原生事件綁定
 function demo(){
     alert('按鈕3被點擊了')
 }
