@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>高階函數_函數柯里化</title>
+    <title>2.不用函數柯里化的實現</title>
 </head>
   <body>
   <!-- 準備好一個 "容器" -->
@@ -19,20 +19,6 @@
   <script type="text/javascript" src="../js/babel.min.js"></script>
 
   <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
-  // #region
-  /*
-   高階函數: 如果一個函數符合下面 2個 規範中的任何一個，那該函數就是高階函數
-   1. 若 A函數，接收的參數是一個函數，那麼 A 就可以稱之為高階函數
-   2. 若 A函數，調用的返回值依然是一個函數，那麼 A 就可以稱之為高階函數
-   常見的高階函數有：Promise，setTimeout，arr.map() 等等
-
-   函數的柯里化: 通過函數調用繼續fanhui函數的方式，實現多次接收參數最後統一處理的函數編碼形式
-   */
-   //#endregion
-
-  // new Promise(()=>{})
-  // setTimeout(()=>{})
-
   // 1. 創建組件
   class Login extends React.Component{
 
@@ -43,9 +29,8 @@ state = {
 }
 
 //保存表單數據到狀態中
-saveFormData = (dataType, event)=>{
+saveFormData = (dataType,event)=>{
     this.setState({[dataType]:event.target.value})
-
 }
 
 //表單提交的回調
@@ -57,22 +42,41 @@ handleSubmit = (event)=>{
 render(){
     return(
         <form onSubmit={this.handleSubmit}>
-
-        {/** 把 saveFormData 作為 onChange 的回調 */}
-
-        {/** 把 nChange={this.saveFormData('username') 
-        把 saveFormData('username') 該函數調用的 返回值 作為 onChange 的回調
-        */}
-
+        
         {/*
-        * 透過調用 saveFormData 來傳遞兩個值 username 和 event （傳遞 event 是因為發生在 onChange 那個元素的 value 值, 所以可以通過 value 取出來)
+        把 saveFormData 作為 onChange 的回調
+
+        把 onChange={this.saveFormData('username') 
+        把 saveFormData('username') 該函數調用的 返回值 作為 onChange 的回調
+        
+
+        
+         透過調用 saveFormData 來傳遞兩個值 username 和 event （傳遞 event 是因為發生在 onChange 那個元素的 value 值, 所以可以通過 value 取出來)
          onChange 需要一個函數作為回調，而 React 會幫助調用 event 該函數來傳入，通過後面的 event 就可以取得值
          所以通過該函數調用 saveFormData 就可以得到 username 的值
-         */}
+        */}
+
         用戶名: <input onChange={event => this.saveFormData('username',event) } type="text" name="username"/>
         密碼: <input onChange={event => this.saveFormData('password',event) } type="password" name="password"/>
         <button>登錄</button>
         </form>
+
+        /**
+            onChange={()=>{}}  該函數 {()=>{}} 在我觸發了 onChange 的時候， React 幫我調用的，
+            而誰能收到 event 呢？ 就是 {(event)=>{}}，而且我們可以在該函數調用 this.saveFormData() 和傳遞兩個值 ('username',event.target.value)
+            第一個值是 'username' 第二個值是 event.target.value - 它是發生在 onChange 事件那個元素的 value值
+
+            簡化寫法：{event => this.saveFormData('password',event) }
+            但是要把 event.target.value 傳遞到 this.setState({[dataType]:event.target.value})
+            還有把 event 寫到 saveFormData = (dataType, event)=>{
+
+            總結： onChange={(event) => {this.saveFormData('username',event.target.value)}}
+            - 因為 onChange 需要一個函數作為回調 - 該函數就是： {(event) => {this.saveFormData('username',event.target.value)}}
+            - 而 React 就會幫我們調用該函數，就會傳入 (event)，所以我們就可以通過 event.target.value 取得值
+            - 還有我們在這個函數裡面調用了 this.saveFormData
+
+            所以我們沒有使用函數柯里化
+         */
     )
 }
 }

@@ -26,7 +26,28 @@
    - 有多少個輸入項目，就要寫多少個 ref
    - 勿過度使用 ref
 
-  - 受控組件 ！推薦使用！
+
+  - 受控組件 ！推薦使用！勿過度使用 ref
+
+  什麼是受控組件呢？
+  - 頁面中所有輸入類的 DOM，例如 input 框，就是一種輸入類的 DOM
+  用戶名: <input onChange={this.saveUsername} type="text" name="username"/>
+  - 例如 input 框，這種輸入類的 DOM，隨著你的輸入，就會把你輸入的東西維護到 state 初始化狀態裡面，
+  - 在你需要用的時候，就可以直接從 state 初始化狀態裡面取出來，
+  例如在這個步驟使用： 
+  handleSubmit = (event)=>{
+          event.preventDefault() // 阻止表單提交
+          /* 隨著你的輸入，就會把我所輸入的值提前拿到了，而且儲存到 初始化狀態 state 裡面，
+             所以當你回頭去提示信息的時候，{username,password} 就要從 this.state 取得，
+             因為我們從 this.state 取得 username 和 password 真正的值，所以我們不用再寫 username.value 直接寫成 username 即可，password 同理
+          
+          const {username,password} = this.state // 當你回頭去提示信息的時候，username 和 password 要從 state 取得，就已經可以得到真正的值
+          alert(`你輸入的用戶名是: ${username}, 你輸入的密碼是: ${password}`) // 因為已經從上面取得真正的值，所以不要再重新取得 value
+      }
+
+
+  - 這就是屬於 受控組件
+
    2. 隨著你的輸入來維護狀態就是受控組件
    - 沒有 ref
    - 優勢是能夠省略 ref
@@ -38,6 +59,7 @@
   class Login extends React.Component{
 
       // 初始化狀態
+      // 把用戶名 和 密碼初始化狀態，才可以把相關的資料放到 this.setState({username:event.target.value})，password 同理
       state = {
           username:'', //用戶名
           password:'' //密碼
@@ -46,6 +68,12 @@
       //保存用戶名到狀態中
       saveUsername = (event)=>{
           // console.log(event.target.value);
+          /**
+           * 因為是給 input 綁定的 onChange，我們想要拿到 input 的值
+           * 所以就可以直接用 username.event.target.value 獲取 username 的值
+           * 再把拿到的 username 的值儲存到狀態裡
+           */
+          // 所以當你輸入的時候，你的用戶名就維護到狀態裡
           this.setState({username:event.target.value}) // 把用户名存放在状态里面
       }
 
@@ -55,9 +83,13 @@
           this.setState({password:event.target.value}) // 把用户名存放在状态里面
       }
 
-      //表單提交的回調
+      //表單提交的回調 
       handleSubmit = (event)=>{
           event.preventDefault() // 阻止表單提交
+          /* 隨著你的輸入，就會把我所輸入的值提前拿到了，而且儲存到 初始化狀態 state 裡面，
+             所以當你回頭去提示信息的時候，{username,password} 就要從 this.state 取得，
+             因為我們從 this.state 取得 username 和 password 真正的值，所以我們不用再寫 username.value 直接寫成 username 即可，password 同理
+          */
           const {username,password} = this.state // 當你回頭去提示信息的時候，username 和 password 要從 state 取得，就已經可以得到真正的值
           alert(`你輸入的用戶名是: ${username}, 你輸入的密碼是: ${password}`) // 因為已經從上面取得真正的值，所以不要再重新取得 value
       }
@@ -65,6 +97,10 @@
           return(
               <form onSubmit={this.handleSubmit}>
               用戶名: <input onChange={this.saveUsername} type="text" name="username"/>
+              {/** 原生裡面有個事件 onChange，而輸入類的 DOM 都可以綁定 onChange
+                - 例如：勾選框，由未勾選變成勾選是一種改變，只要改變了，就會調用 onChange 所指定的回調
+                - 另一個例子：input框，由原來的沒有任何值，由空的變成輸入了值，也是一種改變，所以只要改變了就會調用所指定的回調
+             */}
               密碼: <input onChange={this.savePassword} type="password" name="password"/>
               <button>登錄</button>
               </form>

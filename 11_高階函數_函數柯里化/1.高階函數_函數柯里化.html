@@ -21,20 +21,34 @@
   <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
   // #region
   /*
+  saveFormData 就是高級函數，而什麼是高級函數呢？ 如下定義： 它符合第2個定義，所以是高級函數
    高階函數: 如果一個函數符合下面 2個 規範中的任何一個，那該函數就是高階函數
    1. 若 A函數，接收的參數是一個函數，那麼 A 就可以稱之為高階函數
    2. 若 A函數，調用的返回值依然是一個函數，那麼 A 就可以稱之為高階函數
    常見的高階函數有：Promise，setTimeout，arr.map() 等等
 
-   函數的柯里化: 通過函數調用繼續fanhui函數的方式，實現多次接收參數最後統一處理的函數編碼形式
+   // 複習 6_演示函數的柯里化
+   - 函數的柯里化: 通過函數調用繼續返回函數的方式，實現多次接收參數最後統一處理的函數編碼形式
 
-   unction sum(a){
+   function sum(a){
        return(b)=>{
            return(c)=>{
                return a+b+c
            }
        }
    }
+
+   本科的 函數的柯里化：
+   saveFormData 接收到一個 （dataType）的參數，而且 saveFormData 也是一個函數，
+   而它 return 的也是一個函數，而這個函數，也接收 （event）這個參數，
+   所以它們是兩個函數接收到兩個參數，
+   最終，進行了一次統一處理 - this.setState({[dataType]:event.target.value})
+
+   saveFormData = (dataType)=>{
+       return (event)=>{
+           this.setState({[dataType]:event.target.value})
+       }
+    }
    */
    //#endregion
 
@@ -52,6 +66,25 @@ state = {
 
 //保存表單數據到狀態中
 saveFormData = (dataType)=>{
+    /**
+     * 由於 saveFormData 的 返回值 不是 undefined，它的返回值是一個函數，所以要寫成 return ()=>{}，而該寫法是什麼意思呢？
+     * 就是把這個 {this.saveFormData('username')} 的 saveFormData 的返回值所返回的那個函數，交給你 onChange 作為回調
+     * 所以我們給 onChange 的回調是一個函數，而函數是從 saveFormData 調用返回值所得來的。
+     * 因此我們真正交給 onChange 作為回調的是 saveFormData 所返回 return 的那個函數，
+     * 而 saveFormData 接收到什麼參數，是取決於你給它傳的 ('username')，所以參數是可以接收不同的數據類型，我們要傳入 dataType
+     * 
+     * 因此當我們在 用戶名 或 密碼 裡面輸入東西的時候，由於輸入東西是一種改變，onChange 就會被觸發，所以 return 就是它的回調，因為 React 幫我們調用了
+     * 而當 React 幫我們調用的時候，就會把 event 傳進去，所以我們要拿到數據就要寫上 event.target.value
+     * 
+     * 所以我們可以依靠 dataType 這個形参進行標識，具體地幫我們標識拿到那一個數據類型，
+     * 因此我們可以透過 dataType 得到所獲得的是哪一種類型的值，是用戶名還是密碼，再透過 event.target.value 把真正的值給妳
+     * 
+     * 總結：以上的方法就可以把 username 和 password 共同使用同一個方法 saveFormData
+     * - saveFormData 的返回值依然是一個函數，而這個函數才是 onChange 的回調
+     * 
+     * 複習：5_對象相關的知識
+     * 由於對象裡面所有的屬性名都是字符串，而我們需要讀取 dataType 的變量，所以要加上 中括號[dataType]
+     */
     return (event)=>{
         //console.log(dataType,event.target.value);
         this.setState({[dataType]:event.target.value}) // 在 this.setState({}) 存什麼，要視乎 dataType 給我們什麼
@@ -72,13 +105,23 @@ render(){
 
         {/** 把 saveFormData 作為 onChange 的回調 */}
 
-        {/** 把 nChange={this.saveFormData('username') 
-        把 saveFormData('username') 該函數調用的 返回值 作為 onChange 的回調
+        {/** onChange={this.saveFormData('username') 該寫法的含義如下：
+        把 saveFormData('username') 的 返回值 交給了 onChange 作為回調
+        而不是將 saveFormData 交給了 onChange 作為回調！！！
+        - saveFormData 的返回值是什麼呢？ 就是 undefined，當你把一個 undefined 交給了 onChange 作為回調，在你輸入東西的時候，React 就不會幫你調
+
+
+
+        而 onChange={this.saveFormData} 該寫法就是把 saveFormData 這個函數交給了 onChange 作為回調
+        當你在輸入框輸入值的時候，發生改變的時候，就會幫你調 saveFormData
         */}
 
         用戶名: <input onChange={this.saveFormData('username')} type="text" name="username"/>
         {/** 必須拿一個函數作為事件的回調，不能拿別的，而將該函數交給 onChange 回調 */}
-        {/** this.saveFormData('username)  括號裡面的 ('username') 是告訴 saveFormData 要存儲的是什麼 */}
+        {/** 保存表單數據 saveFormData，
+        this.saveFormData('username‘)  括號裡面的 ('username') 是告訴 saveFormData 要存儲的是什麼，
+        也就是說我們可以共用一個叫 saveFormData，而它到底保存誰？可以直接通過 參數（'username'）和 ('password')
+        */}
 
         密碼: <input onChange={this.saveFormData('password')} type="password" name="password"/>
         <button>登錄</button>
@@ -88,6 +131,25 @@ render(){
 }
 // 渲染組件
 ReactDOM.render(<Login/>,document.getElementById('test'))
+
+/**
+ * 總結：
+ * 一開始的時候，我們是自己調用 {this.saveFormData('username')} 和 我們自己決定現在要存的是 ('username')，
+ * 然後我們在 saveFormData = (dataType)=>{} 接收 dataType，
+ * 再到它的返回值 return 也是一個函數 - return (event)=>{this.setState({[dataType]:event.target.value})，
+ * 所以 onChange 的回調就是 saveFormData 返回的那個函數 - return (event)=>{this.setState({[dataType]:event.target.value})
+ * 因此 React 在你輸入東西的時候，React 在發現你改變了東西的時候 - <input onChange={this.saveFormData('username')} type="text" name="username"/>，就會幫你調用那個回調函數 
+ * 而該回調函數就是 return (event)=>{this.setState({[dataType]:event.target.value})，而該函數並不是 saveFormData
+ * 
+ * 重點！！！！！
+ * 當你在使用事件的回調，在指定的時候，並不是一定不能寫小括號 - onChange={this.saveFormData('password')}
+ * 而該原則是：必須把一個函數 {this.saveFormData('password')} 交給 onChange 作為回調，也就是說必須拿一個函數作為事件的回調，不能拿別的
+ * 所以我們必須保證 {this.saveFormData('password')} 這堆代碼執行完後是一個函數，而且還要把該函數交給 onChange 作為回調
+ * 總結以上，我們就不用糾結在使用事件回調的時候，加不加小括號。
+ * 
+ * 
+ * 
+ */
   </script>
   </body>
 </html>

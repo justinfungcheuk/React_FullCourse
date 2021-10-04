@@ -21,15 +21,20 @@
   <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
   // 1. 創建組件
   class Login extends React.Component{
-      handleSubmit = (event)=>{
+      // 透過 ajax進行交互，阻止表單提交
+      handleSubmit = (event)=>{ // 表單提交是一個默認的動作，所以我們需要利用原生的阻止默認事件就可以
+        // 需要先接一個 event 事件對象
           event.preventDefault() // 阻止表單提交
-          const {username,password} = this
-          alert(`你輸入的用戶名是: ${username.value}, 你輸入的密碼是: ${password.value}`)
+          // 調用 event 身上的一個東西叫 preventDefault() 阻止默認事件
+          const {username,password} = this // 從 this 身上獲取 username 和 password 的節點
+          alert(`你輸入的用戶名是: ${username.value}, 你輸入的密碼是: ${password.value}`) // 提示的是 value 值 
+          // 彈窗展示 
       }
       render(){
           return(
-              <form onSubmit={this.handleSubmit}>
-              用戶名: <input ref={c => this.username = c} type="text" name="username"/>
+              <form onSubmit={this.handleSubmit}> {/** 表單事件 onSubmit 當表單提交的時候確認 */}
+              {/** 當表單提交的時候，幫我調用這個回調 this.handleSubmit 處理這次回調*/}
+              用戶名: <input ref={c => this.username = c} type="text" name="username"/> {/** username 是 用戶名的輸入框的節點  */}
               密碼: <input ref={c => this.password = c} type="password" name="password"/>
               <button>登錄</button>
               </form>
@@ -39,6 +44,16 @@
   // 渲染組件
   ReactDOM.render(<Login/>,document.getElementById('test'))
   
+/**
+ * 總結：
+ * 頁面中所有輸入類的DOM，是現用現取的，就是非受控組件
+ * 那什麼叫現用現取呢？
+ * 1. 當你點擊登錄按鈕時 <button>登錄</button>，就會運行 handleSubmit = (event)=>{}
+ * 2. 再取得節點 onst {username,password} = this
+ * 3. 再取得節點的 value 值，alert(`你輸入的用戶名是: ${username.value}, 你輸入的密碼是: ${password.value}`)
+ * 以上就代表是現用現取
+ */
+
   </script>
   </body>
 </html>

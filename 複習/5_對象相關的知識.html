@@ -11,7 +11,8 @@
    let a = 'name'
 
    let obj = {} // {name:'tom'}
-   obj[a] = 'tom'
+   // obj.name = 'tom' 不要自己寫上 name，我們要讀取
+   obj[a] = 'tom' // 為 a 加上 中括號，代表可以讀取[a]變量，得到 name = ‘tom’
    console.log(obj);
 
   </script>
