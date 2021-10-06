@@ -19,15 +19,32 @@
   <script type="text/javascript" src="../js/17.0.1/babel.min.js"></script>
 
   <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+  /* 使用新版本的 React，要有 17.0.1 的依賴包
+     componentWillMount 和 componentWillUpdate 和 componentWillReceiveProps 都是有 Will 的要在新版本加上 UNSAFE_ 前綴才可以使用，
+     除了 componentWillUnmount。
+     但是， componentWillMount 和 componentWillUpdate 和 componentWillReceiveProps ，所加上的 UNSAFE_ 前綴並不是指安全性，
+     而是指使用這些生命週期的代碼在 React 的未來版本中更有可能出現 Bug，尤其是在啟用異步渲染之後！
+     但是，在程序員開發的時候，基本上都不用以上三個組件生命週期！！！
+   */
+
+   /**
+    * 新和舊的生命週期之間的差別：
+    * 1. 新的生命週期廢棄了三個勾子 componentWillMount 和 componentWillUpdate 和 componentWillReceiveProps
+    * 2. 新的生命週期增加了2個勾子  getDeriveStateFormProps 和 getSnapshotBeforeUpdate，其他都一樣
+    * 但是新增的2個勾子 getDeriveStateFormProps 和 getSnapshotBeforeUpdate 很少用！！！
+    */
 
   // 1. 創建组件
   class Count extends React.Component{
       /**
+       * // 當有 getDerivedStateFromProps 在前方，該組件的 state 是完全取決於 props
+       * 
+       * 
        1. 初始化阶段: 由ReactDOM.render()触发---初次渲染
           1.	constructor()
           2.	getDerivedStateFromProps 
           3.	render()
-          4.	componentDidMount() ====》常用
+          4.	componentDidMount() ========= =》常用
 - 一般在這個鉤子中做一些初始化的事，例如：開啟定時器，發送網絡請求，訂閱消息
 	
 
@@ -36,7 +53,7 @@
           1.	getDerivedStateFromProps
           2.	shouldComponentUpdate()
           3.	render()
-          4.	getSnapshotBeforeUpdate
+          4.	getSnapshotBeforeUpdate //組件更新的時候，需不需要拍快照 或者 想不想獲取目前的滾動條滾動到哪兒 或 目前內容區有多高
           5.	componentDidUpdate()
 	
           3. 卸载组件: 由ReactDOM.unmountComponentAtNode()触发
@@ -71,19 +88,42 @@
           this.forceUpdate()
       }
 
-      // 若 state 的值在任何時候都取決於 props，那麼可以使用 getDerivedStateFromProps
+      // getDerivedStateFromProps 代表：從 props 得到一個派生的狀態，該方法非常少用！！！！！！
+      // 若 state 的值在任何時候都取決於 props，那麼可以使用 getDerivedStateFromProps。也就是說當你的參數是 props 和 return props 就是該情況
+      static getDerivedStateFromProps(props,state){ 
+        /* 由於我們不能定義 getDerivedStateFromProps 這個方法給實例使用，所以要加上 static 這個關鍵字來使用，static  代表它是 靜態方法
+        
+        // 這裡的 props 就是 count=199， 而 state 就是 初始化狀態的 count:0 
+
+           state 代表是由初始狀態的 this.state = {count:0} 傳遞到該 state
+           
+           getDerivedStateFromProps 必須要有返回值，而返回的必須是以下2種的其中一種：1. state Obj 2. null
+           - 必須返回 狀態對象 state Obj （狀態對象的意思是要在 初始化狀態的 this.state 裡面的東西 例如： 初始化狀態 this.state = ({count:0}），
+           所以 狀態對象 要能夠與狀態裡面的 key:value 對上
+           - 或者 null，代表我什麼都不做不影響任何代碼。
+         */
+           console.log('getDerivedStateFromProps',props, state);
+           return null // 代表我什麼都不做不影響任何代碼。
+           // return props // 當 return props 時，在這個位置代表當作一個狀態在使用，因為該 state狀態 它是從 props 中得到的
     
-      static getDerivedStateFromProps(props,state){ // 加上 static 代表它是 靜態方法
-        // state 代表是由初始狀態的 this.state = {count:0} 傳遞到該 state
+      } // 因為 getDerivedStateFromProps 橫跨 掛載和更新，只要有這個生命週期勾子存在，所有的狀態都要聽props的！！！
 
-        // 必須返回 狀態對象 state Obj （狀態對象的意思是要在 初始化狀態的 this.state 裡面的東西）或者 null
-          console.log('getDerivedStateFromProps',props, state);
-          return null
-          // return props // 當 return props 時，在這個位置代表當作一個狀態在使用，因為該 state狀態 它是從 props 中得到的
-      }
 
-      //在更新之前獲取快照 ====》 不常用
-      getSnapshotBeforeUpdate(){
+
+      /**
+       * getSnapshotBeforeUpdate() 在最近一次渲染输出（提交到 DOM 节点）之前调用。
+       * 它使得组件能在发生更改之前从 DOM 中捕获一些信息（例如，滚动位置）。
+       * 此生命周期方法的任何返回值将作为参数传递给 componentDidUpdate()。
+       * 因為 getSnapshotBeforeUpdate() 的下游傳遞的是 componentDidUpdate()。所以 此生命周期方法的任何返回值将作为参数传递给 componentDidUpdate()
+       */
+
+
+      /* getSnapshotBeforeUpdate 代表在更新之前獲取快照，
+         getSnapshotBeforeUpdate 的返回值必須返回2個其中一個： return Snapshot 的值 或者 null
+         而 Snapshot value = Snapshot的值 可以是任何值。例如：字符串，數組，對象，函數，都可以作為快照值。
+      */
+      //在更新之前獲取快照 ====》 不常用！！！！！！！！！！
+      getSnapshotBeforeUpdate(){ // 在頁面更新之前獲取未更新的資料 + 新的資料，再傳給 componentDidUpdate
           console.log('getSnapshotBeforeUpdate');
           return 'aiguigu'
       }
@@ -107,6 +147,11 @@
 
       //組件更新完畢的鉤子
       componentDidUpdate(preProps,preState,snapshotValue){
+          /**
+           * preProps：先前的傳遞的 props，
+           * preState：先前傳遞的狀態
+           * snapShotValue：
+           */
         console.log('Count---componentDidUpdate',preProps,preState,snapshotValue);
       }
 
@@ -126,8 +171,12 @@
 }
   //渲染組件
   ReactDOM.render(<Count count={199}/>,document.getElementById('test'))
-  // 該渲染的 count="199" 的值，是在 static getDerivedStateFromProps(props,state) 裡面的 props
-  // 而它所 return 的 props 也就是 count="199"
+  /* 該渲染的 count="199" 的值，是在 static getDerivedStateFromProps(props,state) 裡面的 props
+     而它所 return 的 props 也就是 count="199"
+
+     count="199" 是在初次渲染的時候傳遞，
+     count={199} 也就是 初始化裡面的 this.state = {count:0}
+   */
   </script>
   </body>
 </html>

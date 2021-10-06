@@ -19,28 +19,40 @@
   <script type="text/javascript" src="../js/babel.min.js"></script>
 
   <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
-  /*
+  /* 總結：
    1. 初始化阶段: 由ReactDOM.render()触发---初次渲染
 1.	constructor()
 2.	componentWillMount()
 3.	render()
-4.	componentDidMount(）====》常用
+
+4.	componentDidMount(）====》常用！！！！！！！！！！！！！！！！！！！！ 代表頁面一開始的時候
 - 一般在這個鉤子中做一些初始化的事，例如：開啟定時器，發送網絡請求，訂閱消息
 
-	2. 更新阶段: 由组件内部this.setSate()或父组件重新render触发
+	2. 更新阶段可以有2種: 1. 由组件内部this.setSate() 或 2. 父组件render触发
+    也就是說從 父組件A 裡面調用了 setState 就會引起父裡面 state 初始化狀態的改變，只要父裡面狀態發生改變，父的render也會調用，
+    而我們在父的render裡面還寫了 子組件的標籤 <B carName={this.state.carName}/>，子組件就會重新render
 1.	shouldComponentUpdate()
 2.	componentWillUpdate()
-3.	render()
-4.	componentDidUpdate() ====》 必須使用的一個
+3.	render() ====》 必須使用的一個！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+4.	componentDidUpdate() 
 
 	3. 卸载组件: 由ReactDOM.unmountComponentAtNode()触发
-1.	componentWillUnmount() =====》常用
+
+1.	componentWillUnmount() =====》常用！！！！！！！！！！！！！！！！！
 - 一般在這個鉤子中做一些收尾的事，例如：關閉定時器，取消訂閱消息
 
    */
 
+   /*
+   1. 組件從創建到死亡它會經歷一些特定的階段 - 例如：componentDidMount - componentWillUnmount
+   2. React組件中包含一系列鈎子函數（也就生命週期回調函數），會在特定的時刻調用 - 例如：componentDidMount 組件掛載完畢
+   3. 我們在定義組件時，會在特定的生命週期回調函數中，做特定的工作 - 例如：setInterval(){}
+
+   生命週期在什麼時候調用，與所寫的代碼的順序是沒有關係的，React 會在合適的時候幫你調用！
+   */
+
   // 1. 創建组件
-  class Count extends React.Component{
+  class Count extends React.Component{ 
 
       //構造器
       constructor(props){ // 構造器是做初始化的東西
@@ -55,9 +67,9 @@
       //加 1 按鈕的回調
       add = ()=>{
           //獲取原狀態
-          const {count} = this.state
+          const {count} = this.state // 要先獲取原來的狀態才可以 + 1
           //更新狀態
-          this.setState({count:count+1})
+          this.setState({count:count+1}) // {count:count+1} 代表把 count 的值改為，剛才你取出來的 count 加上 1
       }
 
       //卸載組件按鈕的回調
@@ -65,12 +77,13 @@
           ReactDOM.unmountComponentAtNode(document.getElementById('test')) //卸載組件
       }
 
-      //強制更新按鈕的回調
-      force = ()=>{
+      //強制更新按鈕的回調 - 代表不對狀態做出任何的修改，組件也能幫你更新
+      // forceUpdate() 強制更新，可以不通過 shouldComponentUpdate，直接繞過它，來到 componentWillUpdate 該步驟，再往下繼續運行
+      force = ()=>{ // 該方法比較少用
           this.forceUpdate()
       }
 
-      //組件將要掛載的鉤子
+      //組件將要掛載的鉤子 
       componentWillMount(){
           console.log('Count---componentWillMount');
       }
@@ -86,7 +99,14 @@
       }
 
       //控制組件更新的‘閥門’，開啟該步驟才可以繼續向下一個步驟運行
-      shouldComponentUpdate(){
+      shouldComponentUpdate(){ 
+          /* 當調用了 setState()，React 就會幫你更新狀態，更新完狀態就會幫你調 render，
+            但是在它們兩個之間有另外 2個 shouldComponentUpdate 和 componentWillUpdate
+            當調了 setState()時，會調用 shouldComponentUpdate，該鈎子決定應不應該更新頁面 / 更改狀態
+            所以，當 shouldComponentUpdate 返回 true 時，後面的流程 componentWillUpdate(){}，render，componentDidUpdate(){}等等，都可以繼續運行下去。
+            但是 return flase，本次更新的狀態就會在 shouldComponentUpdate 停止，導致閥門關閉，不會再繼續往下運行代碼。 
+            注意：如果你不寫 shouldComponentUpdate，它會默認為 true，但是你寫了它就必須寫return true or false。返回值必須是布爾值！
+          */
           console.log('Count---shouldComponentUpdate');
           return true
       }
@@ -116,6 +136,7 @@
       }
   }
 
+  // 形成 父組件 render，A 是 B 組件的父組件 
   //父组件A
   class A extends React.Component{
       //初始化狀態
@@ -141,7 +162,8 @@
       而該代碼重新執行，B組件的render就會重新調用，來傳遞一個新的值 {this.state.carName}
       所以會導致第二次接收 props
           */}
-          <B carName={this.state.carName}/>
+          <B carName={this.state.carName}/> {/** 讓 B組件 展示汽車 */}
+          {/** 給 B 傳遞了標籤屬性 carName 值為 '奔馳'*/}
         </div>
       )
     }
@@ -151,7 +173,7 @@
   class B extends React.Component{
       //組件將要接收新的 props 的鉤子
       componentWillReceiveProps(props){ //它可以接收參數 props
-          console.log('B---componentWillReceiveProps',props);
+          console.log('B---componentWillReceiveProps',props);// 接收到 props 就會得到 'B---componentWillReceiveProps {carName:'奧迪'}
       }
 
       //控制組件更新的‘閥門’，開啟該步驟才可以繼續向下一個步驟運行
@@ -169,7 +191,20 @@
       componentDidUpdate(){
         console.log('B---componentDidUpdate');
       }
-
+      // 當 父組件 重新render，子組件就會響應 componentWillReceiveProps 的生命週期鈎子 （意思是組件將要接收 參數/或者叫標籤屬性）
+      /**
+       * 但是 componentWillReceiveProps 有個特定，它在一開始的時候，在第一次的時候展示了 奔馳，只能代表它接收到了 props，但不會調用該勾子，
+       * 因為第一次不算調用勾子，
+       * 
+       * 但是當你點擊了 換車按鈕，就會調用 changeCar = ()=>{}，而 changeCar裡面 this.setState({carName:'奧迪'}) ，就更改了 A組件的狀態，
+       * 就導致了 A組件 調用了 render，因此 A組件 調用render，就是 2_react生命週期圖片所說的 父組件render，
+       * 
+       * 而由於父組件render之前已經render了第一次，而這次render就是重新render，就會執行 <B carName={this.state.carName}/>
+       * 所以該代碼 <B carName={this.state.carName}/> 重新執行，因此該代碼重新執行就代表 B組件的render 會重新調用，就會傳入一個新的 props值 = carName:'奧迪' 
+       * 
+       * 
+       * 總結：當你點解 換車 就會啟動第二次執行 render，運行 componentWillReceiveProps
+       */
       render(){
           console.log('B---render');
           return(
@@ -180,6 +215,12 @@
 
   //渲染組件
   ReactDOM.render(<A/>,document.getElementById('test'))
+
+  /**
+   * 總結：
+   * 
+   * 
+   */
   </script>
   </body>
 </html>

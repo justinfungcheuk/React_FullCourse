@@ -10,7 +10,7 @@
             width: 200px;
             height: 150px;
             background-color: skyblue;
-            overflow: auto;
+            overflow: auto; /** 滾動條 */
         }
         .news{
             height: 30px;
@@ -30,44 +30,68 @@
   <script type="text/javascript" src="../js/17.0.1/babel.min.js"></script>
 
   <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+  /**
+   * 
+   */
+
   // 1. 創建組件 
   class NewsList extends React.Component{
 
     state = {newsArr:[]} // 每一項都是一條新聞
 
+    // 一掛載就開始一個循環定時器 setInterval(() => {}, 1000);
     componentDidMount(){ // 組件一掛載每隔一秒鐘就回來一條
         setInterval(() => {
             //獲取原狀態
             const {newsArr} = this.state
             // 模擬一條新聞
-            const news = '新聞'+ (newsArr.length+1)
+            const news = '新聞'+ (newsArr.length+1) // (newsArr.length+1) 加上 1 的意思代表新聞的開頭是 新聞1 不是 新聞0
             // 更新狀態
-            // 把一個數組交給 newsArr，數組的樣子是：前面是新生成的 news, 後面是之前的數組 ...newsArr
-            this.setState({newsArr:[news,...newsArr]})
+            // 把一個數組交給 newsArr，數組的樣子是：前面是新生成的最新的新聞 news, 後面是之前的新聞數組 ...newsArr
+            this.setState({newsArr:[news,...newsArr]}) // 更新 newsArr 的狀態
         }, 1000);
     }
 
-    getSnapshotBeforeUpdate(){
+    getSnapshotBeforeUpdate(){ 
+        /* 調用該 getSnapshotBeforeUpdate的時候，代表新的新聞還沒有放到頁面的時候，在此時我們就可以拿內容區的高度
+           因為接下來再運作下去，新的新聞就會回來，所以我們要知道這個新的新聞回來之前，你的內容區有多高！
+           所以我們要拿到 list 內容區的高度
+        */
+
+        // 把 它的內容區高度 scrollHeight 拍一個快照
         return this.refs.list.scrollHeight // 把它的內容區高度往下傳
-    }
+    }  // 當加了 return 之後， 就會傳給 componentDidUpdate
+
+    /** 當新的新聞還沒有放到頁面就調用 getSnapshotBeforeUpdate，而頁面更新完畢就會調用 componentDidUpdate 代表新的新聞已經放到頁面上，
+     * 所以 componentDidUpdate 和 etSnapshotBeforeUpdate 之間差一條新聞！
+     * 因此可以在 componentDidUpdate 的內容區的高度 和 getSnapshotBeforeUpdate 的內容區的高度，算出它們2個之間的差值，再動態的決定整個內容區往上往下串多少，
+     * 就能實現新的新聞持續的往回回作展示，而且還不影響你現在看新聞。
+     */
+
 
     // 把內容傳給 componentDidUpdate
-    componentDidUpdate(preProps,preState,height){ // 之前的內容
-        // his.refs.list.scrollTop 代表動態的調整 list 內容區往上串多少
+    // 你傳的高度 height
+    componentDidUpdate(preProps,preState,height){ // 之前的內容 和 新的內容已經掛載到了頁面
+        /* this.refs.list.scrollTop 代表動態的調整 list 內容區往上串多少（因為新聞是不斷持續地回來，向上串，所以要動態的調整 內容區=list 往上串多少=scrollTop）
+           當來到 componentDidUpdate 該步驟，代表組件已經更新完畢，新的新聞已經出現到頁面，代表高度已經增加了，所以要透過 this.refs.list.scrollHeight 拿到它現在的高度，也就是新的新聞出現的高度，
+           再減去 - height，而 height 代表之前的高度，就等於它們兩個組件之間的差值。
+        */
         this.refs.list.scrollTop +=  this.refs.list.scrollHeight - height
-        // += 符號代表是持續的往上串，因為不停有新的新聞傳進來，而不是串一位
+        // += 符號代表是持續的有新聞回來，持續的往上串，因為不停有新的新聞傳進來，而不是串一位
+        // = 如果只是用 = ，就會導致滾動條不會停在某個位置
         // this.refs.list.scrollHeight 拿到現在新的新聞出現的高度，再減去 height 之前的高度，就是它們之間的差值
     }
 
       render(){
           return(
               <div className="list" ref="lsit"> {/** 臨時使用字符串的形式 ref="lsit" */}
-              { //拿到的都是一個新聞，用小寫代替
+            { // 拿到的每一個都是一個新聞，用小寫 n 代表 news
                   this.state.newsArr.map((n, index)=>{ //動態的遍歷
-                    // key 每個人都是唯一的，所以要用 index 來做唯一的標識
+                    // 因為每一個節點的裡面，都是要有唯一的 key，
+                    // 該 key 每個人都是唯一的，所以要用 index 來做唯一的標識
                     return <div key={index} className="news">{n}</div>
                   })
-              }
+                }
               </div>
           )
       }
