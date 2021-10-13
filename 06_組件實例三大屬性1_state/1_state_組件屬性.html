@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>1_state_組件屬性</title>
+</head>
+  <body>
+  <!-- 準備好一個 "容器" -->
+  <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
+  <div id="test"></div>
+
+  <!-- 引入 react 核心庫 -->
+  <script type="text/javascript" src="../js/17.0.1/react.development.js"></script>
+  <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
+  <script type="text/javascript" src="../js/17.0.1/react-dom.development.js"></script>
+  <!-- 引入 babel, 用於將 jsx 專為 js -->
+  <script type="text/javascript" src="../js/17.0.1/babel.min.js"></script>
+
+  <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+
+  /*
+   需求：自定義組件，功能說明如下
+   1. 顯示 h2 標題，初始文本為：你喜歡我
+   2. 點擊標題更新為：我喜歡你
+
+   理解：state 屬性，值是對象{}
+   - state是組件對象最重要的屬性，值是對象 （可以包含多個數據/多個狀態值）
+      - 組件被稱為 “狀態機”（根據我的狀態來顯示），通過更新組件的 state 來更新對應的頁面顯示（重新渲染組件）
+
+    本課重點：狀態的三個操作
+    1. 初始化狀態
+    2. 讀取狀態 - 在render裡面讀取後渲染到頁面
+    3. 更新狀態 - 需要讀取狀態
+    4. 如果將新增的方法強制綁定 this 為組件對象 （透過 bind方法）
+      */
+
+
+  // 1. 定義組件
+  class Like extends React.Component{ // React 是一個對象，React內部的 Component 是一個屬性
+      /* 在 React 裡面，不用親自操作，只需要操作數據，只要數據改變，你的組件的介面就會改變。
+      而這個 數據 指的就是狀態 state
+      */
+
+      constructor (props){ // constructor 接收 props 參數
+          super(props) // super(props) 代表調用父類型 React.Component 的構造函數，把 props 傳給 Component （總結：把 props 交給父類型 Component）
+          // 初始化狀態 - 在 constructor 裡面賦初始值
+          this.state = { //（組件對象是當前的 this - 47）
+              isLikeMe: false              
+              // 根據 false 這個屬性值來顯示，它涉及到要讀取 isLikeMe 這個狀態值來顯示
+          } 
+          
+          // 將新增方法中的 this 強制綁定為組件對象 （組件對象是當前的 this）也就是初始化狀態的 this.state
+          this.handleClick=this.handleClick.bind(this) // bind 的方法要返回一個新的函數
+          /* 通過 this.handleClick 先得到該方法，但是 this 得到的該方法並不代表它裡面的 this 執行的時候是組件對象，它仍然默認是一個 undefined，
+          因此，我們要通過 bind(this)方法 產生一個新的函數，this.handleClick.bind(this)，才可以執行 this 的組件對象。
+          - bind 方法會返回一個新的函數，新的函數所指定的 this，所以我們要透過 this.handleClick=this.handleClick.bind(this)，才可以強制把 this 綁定為組件對象
+          */
+      }
+
+      // 新添加方法 handleClick(){}：內部的 this 默認不是組件對象，而是 undefined，要用 bind方法 才可以調用組件對象 this
+      handleClick(){
+          console.log('handleClick()',this) // 讓該方法的 this 強制指向組件對象，要用 bind
+          // 得到以前的狀態並取反，得到新的狀態
+          const isLikeMe = !this.state.isLikeMe
+          // 更新狀態
+          this.setState({isLikeMe}) // 要有取反，必須要先得到以前的狀態並取反
+          // this.setState({})，裡面必須傳對象，因為我們的初始化狀態是對象 this.state = {isLikeMe: false}
+      }
+
+      /**
+      新添加的方法 和 render(){} 方法 之間的區別：
+      1. 新添加方法 handleClick(){}：內部的 this 默認不是組件對象，而是 undefined，要用 bind方法 才可以調用組件對象 this
+      - 讓該新添加的方法的 this 強制指向組件對象，要用 bind。例如： this.handleClick=this.handleClick.bind(this) // bind 的方法要返回一個新的函數
+      2. render(){} 方法，只是重寫組件類的方法 （因為組件內原本就有 render 這個方法） 
+       */
+
+      // 重寫組件類的方法 （因為組件內原本就有 render 這個方法）
+      render(){
+          // 讀取狀態 - 讀取 isLikeMe 的狀態值，最終要得到 isLikeMe 的值
+          const {isLikeMe} = this.state // 加上中括號就是解構賦值 {}， 我們給 this.state屬性 賦了一個對象{isLikeMe:false}，所以要把讀取狀態寫成 const isLikeMe = this.state.isLikeMe
+          /* 要得到 isLikeMe 的值，而當前組件對象裡面有 state 這個屬性，
+          */ 
+
+          /**
+          onClick={} 點擊的回調函數，中括號{} 裡面要寫 純JS代碼，this.handleClick 觸發點擊事件
+          該 this 是組件對象，告訴 this 是調用組件對象的 handleClick 這個方法，但是它不能加上括號()，它只是告訴組件對象去調用這個方法，
+          所以我們要給組件內添加該方法
+
+          handleClick(){
+          console.log('handleClick()',this) // 讓該方法的 this 強制指向組件對象，可以用 bind
+          // 得到狀態並取反
+          const isLikeMe = !this.state.isLikeMe
+          // 更新狀態
+          this.setState({isLikeMe}) // 要有取反，必須要先得到以前的狀態並取反
+      }
+           */
+          return <h2 onClick={this.handleClick}>{isLikeMe?'你喜歡我':'我喜歡你'}</h2>
+          /* 交互 - 當點擊標題就會把 你喜歡我 更新為 我喜歡你，或者 把 我喜歡你 更新為 你喜歡我
+          - 做交互要從綁定事件監聽做交互 = 用戶對你的頁面做操作就會響應變化
+          */
+      }
+  }
+  // 2. 渲染組件標籤
+  ReactDOM.render(<Like/>,document.getElementById('test'))
+  
+  </script>
+  </body>
+</html>

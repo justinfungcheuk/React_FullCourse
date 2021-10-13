@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>8.1_組件組合使用_初始化顯示</title>
+</head>
+  <body>
+  <!-- 準備好一個 "容器" -->
+  <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
+  <div id="test"></div>
+
+  <!-- 引入 react 核心庫 -->
+  <script type="text/javascript" src="../js/17.0.1/react.development.js"></script>
+  <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
+  <script type="text/javascript" src="../js/17.0.1/react-dom.development.js"></script>
+  <!-- 引入 babel, 用於將 jsx 專為 js -->
+  <script type="text/javascript" src="../js/17.0.1/babel.min.js"></script>
+  <!-- 引入prop-types,用於對組件標籤屬性進行限制，全局又多了一個對象 稱為：PropTypes -->
+  <script type="text/javascript" src="../js/prop-types.js"></script>
+
+  <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+  /*
+   問題1：數據保存在哪個組件內？
+         看數據是某個組件需要（給它），還是某些組件需要（給共同的父組件）
+
+   問題2：需要在子組件中改變父組件的狀態 - 在父組件定義函數傳遞子組件，然後再從子組件調用父組件
+         子組件中不能直接改變父組件的狀態
+         狀態在那個組件，更新狀態的行為（行為指的是：函數 或 方法）就應該定義在那個組件
+   解決：父組件定義函數，傳遞給子組件，子組件調用
+
+
+   組件化編寫功能的流程：
+   1. 拆分組件
+   2. 實現靜態組件（只有靜態界面，沒有動態數據和交互）
+   - 每一個組件都有一個 render
+   3. 實現動態組件
+      1） 實現初始化數據動態顯示 （涉及問題1 和 問題2）
+      2） 實現交互功能 
+      - 實現交互的第一步是：綁定事件監聽
+
+
+   - 對於 App組件 來說，todos 是自身的，所以用 state
+   - 對於 List組件，todos 是外部傳給它的，所以是 props 
+
+   當一個組件要顯示一些數據，有兩種情況
+   第一種是內部維護的數據，用state
+   1. state：狀態是組件內部的狀態，且可以更改，是一個變化數據。
+   - 當你要改變狀態，必須要使用一個方法，就是 setState，組件就會發生變化。
+   - 無論是狀態更改了，還是屬性更改了，我們的組件都需要更改。
+
+   第二種是外部傳過來的，而外部傳過來的時候，是當你寫標籤的時候傳遞的，
+   2. props：從外部傳進來
+   
+   3. refs： 標識組件內部某一個元素
+   */
+
+   /**
+   功能：組件化實現此功能
+   1. 顯示所有 todo 列表
+   2. 輸入文本，點擊按鈕顯示到列表的首位，並清除輸入的文本
+    */
+
+
+
+  /*
+   我們要展現的是一個 數組數據，每一個 todo 相當於一個文本（在分析相關數據放在哪一個數組之前，先清除知道有關的 名稱 和 類型）
+   因為 TODO List 是一個列表，所以我們這裡就用數組來處理。
+
+   由於 App組件 是 Add組件 和 List組件 共同的父組件，它們都要使用到 App組件 的數據。
+   - Add組件  要從數組裡面添加數據
+   - List組件 要遍歷讀取數據
+   */
+
+
+  class App extends React.Component {
+
+      constructor(props) {
+      super(props)
+
+      //初始化狀態
+      this.state={
+          todos:['吃飯', '睡覺', '打代碼']
+      }
+
+      this.addTodo = this.addTodo.bind(this) // 只要是你定義的方法，都需要加上 bind 來綁定函數，接收到 組件的實例對象
+    }
+
+    // 添加一個 todo 要接收一個參數 todo （因為你設定了一個 todo，所以要添加參數）
+    addTodo(todo){
+        // this.state.todos.unshift(todo) //不能這麼做，會把代碼寫死
+        const {todos} = this.state
+        todos.unshift(todo) // unshift方法 代表把新添加進來的數組放到最前面
+        // 更新狀態
+        this.setState({todos}) // 要有 setState方法 才可以真正的更新界面的狀態
+    }
+
+      render(){
+          const {todos} = this.state
+          return ( // return 必須只有一個 根標籤 <div></div>!!!!!! 必須在 根標籤 加上小括號()
+              <div>
+              <h1>Sample TODO List</h1>
+              <Add count={todos.length} addTodo={this.addTodo}/> {/** count={todos.length} 傳遞數組的長度，知道我們 Add 的是第幾個數組 */}
+              <List todos={todos}/> {/** 交給 List組件 做一個初始化的顯示 */}
+              </div>
+          )
+      }
+  }
+
+  class Add extends React.Component {
+      
+      constructor(props) {
+          super(props)
+
+          this.add = this.add.bind(this)
+      }
+
+      add () { // 一旦定義了新的函數，需要先有構造器 constructor(props)
+          //1. 讀取輸入的數據
+          const todo = this.todoInput.value.trim() // trim() 去掉兩邊的空格
+          //2. 檢查合法性
+          if(!todo){ // ！todo 代表如果是空的，false，就直接 return 不添加
+              return
+          }
+          //3. 合法了，就添加 - 調用 addTodo方法
+          this.props.addTodo(todo) // 在 props 裡面，添加todo，因為是屬性傳屬性
+          //4. 清除輸入
+          this.todoInput.value = ''
+      }
+
+      render(){
+          return (
+              <div>
+              <input type="text" ref={input => this.todoInput = input}/> {/** 因為要操作該 input，所以我們要記下它*/}
+              <button onClick={this.add}>add #{this.props.count+1}</button> 
+              {/** {顯示一個數據，透過 this.props.count+1} 在 props屬性 裡面 */}
+              {/** 交互從綁定事件監聽開始！！！ */}
+              </div>
+          )
+      }
+  }
+  Add.propTypes = {
+      count: PropTypes.number.isRequired,
+      addTodo: PropTypes.func.isRequired
+  }
+
+
+  class List extends React.Component {
+      render(){
+          const {todos} = this.props
+          return (
+              <ul>
+              {/*現在保存的有數據的數組，我們需要標籤的數組，所以必須要用到 數組的map方法*/}
+              {
+                todos.map((todo, index) => {return <li key={index}>{todo}</li>}) 
+              /*箭頭函數後面 加上 {} 大括號 就是一個函數體，所以必須加上 return，因為函數體本身沒有 return！！！*/
+              }
+              </ul>
+          )
+      }
+  }
+  List.propTypes = {
+          todos: PropTypes.array.isRequired
+      }
+
+  ReactDOM.render(<App />, document.getElementById('test'))
+  </script>
+  </body>
+</html>

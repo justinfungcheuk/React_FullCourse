@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>1_props_update </title>
+</head>
+  <body>
+  <!-- 準備好一個 "容器" -->
+  <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
+  <div id="test"></div>
+  <div id="test2"></div>
+
+  <!-- 引入 react 核心庫 -->
+  <script type="text/javascript" src="../js/17.0.1/react.development.js"></script>
+  <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
+  <script type="text/javascript" src="../js/17.0.1/react-dom.development.js"></script>
+  <!-- 引入 babel, 用於將 jsx 專為 js -->
+  <script type="text/javascript" src="../js/17.0.1/babel.min.js"></script>
+  <!-- 引入prop-types,用於對組件標籤屬性進行限制，全局又多了一個對象 稱為：PropTypes -->
+  <script type="text/javascript" src="../js/prop-types.js"></script>
+
+  <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+  /*
+  需求：自定義傭來顯示一個人員信息的組件，效果如頁面。說明：
+  1. 如果性別沒有指定，默認為男
+  2. 如果年齡沒有指定，默認為18
+  */
+
+  // 1， 定義組件
+  /*function Person (props){ // 傳遞參數 props，讓函數接收屬性
+      return (
+          <ul>
+          <li>姓名：{props.name}</li>
+          <li>年齡：{props.age}</li>
+          <li>性別：{props.sex}</li>
+          </ul>
+      )
+  }
+  */
+
+  class Person extends React.Component {
+      render(){
+          console.log(this);
+          return (
+          <ul>
+          <li>姓名：{this.props.name}</li> {/** this 代表組件對象 */}
+          <li>年齡：{this.props.age}</li>
+          <li>性別：{this.props.sex}</li>
+          </ul>
+      )
+      }
+  }
+
+  // 指定屬性默認值
+  Person.defaultProps = {
+      sex:'男',
+      age: 23
+  }
+
+  // 指定屬性值的類型和必要性
+  Person.propTypes = {
+      name: PropTypes.string.isRequired,
+      age: PropTypes.number,
+      sex: PropTypes.string
+  }
+
+
+  // 2. 渲染組件標籤
+  const p1 = {
+      name: 'Tom',
+      age: 23,
+      sex: '女'
+  }
+
+  /**
+  ...的作用
+  1. 打包：把多個數據儲存，包在一個包裡面。
+  定義函數 function fn(...as) {}  // 把 1，2，3 打成數組包放到 ...as裡面 = 包裹容器的意思 - 是數組或對象
+  fn(1, 2, 3)
+  2. 解包：將一個數組或對象拿出來，拆包。例如： p1 裡面有三個鍵對，屬性名和屬性值，把它們一起放到 ...p1裡面。
+  const arr1 = [1,2,3] const arr2 = [6, ...arr1, 9]
+   */
+
+
+  // ReactDOM.render(<Person name={p1.name} age={p1.age} sex={p1.sex}/>,document.getElementById('test'))
+  ReactDOM.render(<Person {...p1}/>,document.getElementById('test'))
+  
+  const p2 = {
+      name: 'JACK',
+  }
+  ReactDOM.render(<Person name={p2.name} age={18}/>,document.getElementById('test2'))
+
+  </script>
+  </body>
+</html>

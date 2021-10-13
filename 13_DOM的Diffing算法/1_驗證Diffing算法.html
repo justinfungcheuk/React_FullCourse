@@ -26,7 +26,7 @@
       componentDidMount (){ // 組件一掛載就開始循環定時器，每隔 1 秒就更新一下狀態，而且每次都把最新的時間放進去
           setInterval(() => {
               this.setState({
-                  date: new Date()
+                  date: new Date() // 每次都把最新的時間放進去 {date: new Date()} -每次調用的時間都是不一樣的 new Date()
               })
           }, 1000);
       }
@@ -37,9 +37,11 @@
           <h1>hello</h1> {/** 真實 DOM */}
           <input type="text"/>
           {/** this.state.date 讀出來的時間 */}
-          <span>現在是: {this.state.date.toTimeString()}</span> 
+          <span>現在是: {this.state.date.toTimeString()}</span> {/**{this.state.date. 讀取時間，再轉成我們能讀懂的文字，toTimeString()} */}
           {/** DOM的Diffing算法最小的比較是標籤，也就是節點。 所以 span標籤是DOM Diffing算法
-            而且 Diffing 的算法是逐層對比
+            而且 Diffing 的算法是逐層對比 （也就是說如果在 span 裡面再加上 input，還會再用 input做對比）
+            所以會把整個 span 去一次次地更新。
+            標籤也可以稱為節點
         */}
           </div>
       )

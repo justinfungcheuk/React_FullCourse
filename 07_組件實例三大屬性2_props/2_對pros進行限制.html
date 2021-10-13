@@ -43,7 +43,7 @@
   /* // 因為組件實例對象 this，是由你所定義的 Person組件 所 new 出來的，
   而你定義的 Person組件，當你每寫一個 Person組件標籤， ReactDOM.render(<Person name="jerry" speak={speak}/>,document.getElementById('test1'))
   React 都會幫你 new 出來一個組件實例，而在組件實例身上的 props屬性 裡面，就包括了你所有傳進去的東西 例如：name="tom" age={18} sex="女" 和 name:'老劉', age:18, sex:'女
-  所以你要和締造實例的人對話是最合適的，因此 Person組件 是專門締造實例的， 它締造這個實例的時候，就可以幫我們加上規則，所以我們要和 Person 進行對象，代碼如下：
+  所以你要和締造實例的人對話是最合適的，因此 Person組件 是專門締造實例的， 它締造這個實例的時候，就可以幫我們加上規則，所以我們要和 Person 進行對話，代碼如下：
 
    Person.屬性規則 = { // 屬性類型 propTypes, 代表給 Person 加上 propTypes 屬性， 再從中括號 {} 裡面加上相關的規則， React 就能幫你限制
    // propTypes 這個屬性的名字不允許改，因為 React 的底層在尋找這個東西，

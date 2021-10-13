@@ -34,8 +34,7 @@
       // 所以我們可以直接寫上賦值語句：state = {isHot:false, wind:'微風'}，就是往 Weaher 的實例對象身上添加一個屬性名為 state，值為對象 {isHot:false, wind:'微風'}
       // 初始化狀態
       state = {isHot:false, wind:'微風'}
-
-
+      
 
 
       /* 為什麼 render 的 this 也是 Weather 的實例對象呢？
@@ -47,9 +46,10 @@
       render(){
           // 讀取狀態
           const {isHot} = this.state
+          
           return <h1 onClick={this.changeWeather}>今天天氣很{isHot?'炎熱':'涼爽'}</h1>  
       }
-
+      
 
       // changeWeather(){} 的自定義方法，基本上都是給事件作為回調去使用
 
@@ -62,6 +62,7 @@
           // 獲取原來的 isHot 值
           const isHot = this.state.isHot
           // 嚴重注意：狀態必須通過 setState 進行修改/更新，且更新是一種合併， 不是替換
+          
           this.setState({isHot:!isHot})
 
           // 嚴重注意： 狀態（state）不可直接更改，下面這行就是直接更改！！！

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>1_ref_update</title>
+</head>
+  <body>
+  <!-- 準備好一個 "容器" -->
+  <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
+  <div id="test"></div>
+
+  <!-- 引入 react 核心庫 -->
+  <script type="text/javascript" src="../js/react.development.js"></script>
+  <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
+  <script type="text/javascript" src="../js/react-dom.development.js"></script>
+  <!-- 引入 babel, 用於將 jsx 專為 js -->
+  <script type="text/javascript" src="../js/babel.min.js"></script>
+
+  <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+  /**
+  需求：自定義組件，功能說明如下：
+  1. 界面如頁面所示：
+  2. 點擊按鈕，提示第一個輸入框中的值
+  3. 當第2個輸入框失去焦點時，提示這個輸入框中的值
+
+  本課重點：
+  1. refs
+  2. 事件處理
+   */
+
+   // 1. 定義組件
+   class MyComponent extends React.Component{
+       
+       constructor (props){
+           super(props)
+
+           this.showInput = this.showInput.bind(this)
+           this.handleBlur = this.handleBlur.bind(this)
+
+       }
+
+       showInput (){ // 自定義的方法就要有 構造器
+           const input = this.refs.content // 標識名稱 content 是對象的屬性名
+           // refs 標識組件內的某一個元素
+           //alert(input.value)
+           alert(this.input.value)
+       }
+
+       handleBlur (event){ // 所有的事件函數都有一個形参 event
+       // 回調函數必須要讀取當前發生事件的值 （這裡是讀取 input 的值）
+            alert(event.target.value)   // 得到當前 input 發生事件元素的值
+       }
+
+       render(){
+           return (
+               <div>
+               <input type="text" ref="content"/>&nbsp;&nbsp; {/** ref 代表是 id，而 refs 代表可以有多個 ref，而 s 的意思是可以是數組或對象 */}
+               <input type="text" ref={input => this.input = input }/>&nbsp;&nbsp;  {/** 該方法要有指定函數 - 它用了箭頭函數 */}
+               {/** ref={input => this.input = input } 是一個回調函數，前面的 input 是固定的。
+               而 this.input = input 的 input 是當前的 <input/> 的 DOM元素，
+               this.input = input 把 input 保存到 this.input 的組件身上 (this 是組件對象)
+                 */} 
+               <button onClick={this.showInput}>提示輸入</button>&nbsp;&nbsp;
+               <input type="text" placeholder="失去焦點提示內容" onBlur={this.handleBlur} />
+               {/** 要操作 DOM元素，是我們發生事件的元素 input */}
+               </div>
+           )
+       }
+   }
+
+   // 2. 渲染組件標籤
+   ReactDOM.render(<MyComponent/>,document.getElementById("test"))
+  
+  </script>
+  </body>
+</html>

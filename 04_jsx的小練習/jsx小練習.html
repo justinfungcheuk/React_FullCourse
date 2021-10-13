@@ -61,11 +61,14 @@
       {
           data.map((item,index)=>{
               return <li key={index}>{item}</li>
+              
           })
+          
       }
       </ul>
       </div>
   )
+
 
   //2. 渲染虛擬DOM到頁面
   ReactDOM.render(VDOM,document.getElementById('test'))

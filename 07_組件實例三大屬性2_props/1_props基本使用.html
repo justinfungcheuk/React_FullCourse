@@ -43,7 +43,7 @@
   ReactDOM.render(<Person name="jerry" age={19} sex="男" />,document.getElementById('test1'))
   // 從外部渲染組件該處做編碼的修改後，再傳遞進去到組件裡面，就要使用到 props
   ReactDOM.render(<Person name="tom" age={18} sex="女" />,document.getElementById('test2'))  
-  // number 類型 {18} 的年齡可以值直接從 age+1 上，加多一歲，而字符串的 age = "18" 卻不行
+  // number 類型 {18} 的年齡可以直接從 {age+1} 上，加多一歲，而字符串的 age = "18" 卻不行
   // 我們需要對 Person 該組件所傳遞的標籤屬性 name="tom" age={18} sex="女"，進行類型的限制，同樣是 18 不能傳遞這種字符串的 "18",要傳遞對象的 {18}，這是對標籤屬性類型的限制
   /*
   三個問題：

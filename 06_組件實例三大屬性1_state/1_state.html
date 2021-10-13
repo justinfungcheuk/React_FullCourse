@@ -34,6 +34,8 @@
       constructor(props){
           console.log('constructor'); // 構造器調用幾次？ -- 1次 
           super(props) // 關於 this 的操作，必須放在 super 的後面
+          // super 就是原生JS class 的用法，可以調用父組件React.Component的方法!!!
+
           // 初始化狀態 - 透過 this 在 Weather 類身上做一些初始化的事情
           this.state = {isHot:false, wind:'微風'} // this.state = {} 中括號代表 this.state 必須是一個對象，因為 Weather 不只是只有 isHot，還有可能是其他。
           // this.state = {key:value,key:value} 中括號{} 裡面是一組一組的 key:value
@@ -97,6 +99,7 @@
           // 讀取狀態 - 可以讀其他狀態，例如：wind 有了初始化，就可以讀取
           const {isHot,wind} = this.state // isHot = this.state.isHot
           // render 是誰？render 裡面的 this 就是 Weather 的組件實例對象
+
           // 讀取狀態
           return <h1 onClick={this.changeWeather}>今天天氣很{isHot?'炎熱':'涼爽'}, {wind}</h1> // 做判斷，決定顯示 true:炎熱 還是 false:涼爽
       }  
@@ -131,8 +134,8 @@
           // 獲取原來的 isHot 值
           const isHot = this.state.isHot
           // 嚴重注意：狀態必須通過 setState 進行 更新，且更新是一種合併(也就是說同名的會被複寫去了，不同名的會維持住)， 不是替換
-          this.setState({isHot:!isHot})
-          // 在 React 當中，如果你要修改zhuangtai，不要自己自己改，要用 setState 這個 API 去修改
+          this.setState({isHot:!isHot}) // 調用 this.setState 該方法是繼承在 React.Component 組件上
+          // 在 React 當中，如果你要修改狀態，不要自己改，要用 setState 這個 API 去修改
           // 所以直接透過 Weather 實例對象的 this. 就可以找到 setState
           // this.setState({}) 可以直接傳入一個對象 {}
 

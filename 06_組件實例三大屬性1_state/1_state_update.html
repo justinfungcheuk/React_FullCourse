@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>state</title>
+</head>
+  <body>
+  <!-- 準備好一個 "容器" -->
+  <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
+  <div id="test"></div>
+
+  <!-- 引入 react 核心庫 -->
+  <script type="text/javascript" src="../js/react.development.js"></script>
+  <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
+  <script type="text/javascript" src="../js/react-dom.development.js"></script>
+  <!-- 引入 babel, 用於將 jsx 專為 js -->
+  <script type="text/javascript" src="../js/babel.min.js"></script>
+
+  <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+  // 1. 創建組件
+  class Weather extends React.Component{ 
+      constructor(props){
+          console.log('constructor'); // 構造器調用幾次？ -- 1次 
+          super(props)
+          // 初始化狀態 - 透過 this 在 Weather 類身上做一些初始化的事情
+          this.state = {isHot:false, wind:'微風'}
+          this.changeWeather = this.changeWeather.bind(this) // 為事件處理函數綁定實例
+          
+      }
+      render(){ 
+          console.log('render');
+          const {isHot,wind} = this.state
+
+          // 讀取狀態
+          return <h1 onClick={this.changeWeather}>今天天氣很{isHot?'炎熱':'涼爽'}, {wind}</h1> // 做判斷，決定顯示 true:炎熱 還是 false:涼爽
+      }  
+      changeWeather(){
+          
+
+          console.log('changeWeather'); // changeWeather 調用幾次？ -- 點幾次調幾次
+          // 獲取原來的 isHot 值
+          const isHot = this.state.isHot
+          // 嚴重注意：狀態必須通過 setState 進行 更新，且更新是一種合併(也就是說同名的會被複寫去了，不同名的會維持住)， 不是替換
+          this.setState({isHot:!isHot})
+
+      }
+  }
+  //2. 渲染組件到頁面
+  ReactDOM.render(<Weather/>,document.getElementById('test'))
+  /**
+   * 總結：
+   *  1. 需要在構造器裡面做初始化狀態
+   *  2. 構造器可以解決 this 指向問題
+   * 
+   *  3. render 裡面的 this 就是組件的實例對象， render 裡面做的最多的就是從狀態裡面讀取東西，然後根據狀態的值做展示
+   * 
+   *  4. changeWeather(){} 部分做的就是 獲取原來的值，再調用 setState(){} 更新狀態
+   * 
+   */
+  </script>
+  </body>
+</html>

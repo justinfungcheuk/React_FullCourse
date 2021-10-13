@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>組件生命周期</title>
+</head>
+  <body>
+  <!-- 準備好一個 "容器" -->
+  <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
+  <div id="test"></div>
+
+  <!-- 引入 react 核心庫 -->
+  <script type="text/javascript" src="../js/17.0.1/react.development.js"></script>
+  <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
+  <script type="text/javascript" src="../js/17.0.1/react-dom.development.js"></script>
+  <!-- 引入 babel, 用於將 jsx 專為 js -->
+  <script type="text/javascript" src="../js/17.0.1/babel.min.js"></script>
+
+  <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+  class Life extends React.Component {
+      
+      constructor(props){
+          super(props)
+
+      //初始化狀態
+      this.state = {
+          opacity: 1
+      }
+
+      this.distoryComponent = this.distoryComponent.bind(this)
+ }
+      componentDidMount () {
+          // 啟動循環定時器
+          this.intervalId = setInterval(function () {
+              console.log('定時器執行。。。')
+              let {opacity} = this.state
+              opacity -= 0.1
+              if(opacity <= 0) {
+                  opacity = 1
+              }
+              this.setState({opacity})
+          }.bind(this), 200);
+      }
+
+      componentWillUnmount () {
+          // 清理定時器
+          clearInterval(this.intervalId) // 要指定清理哪一個定時器，因為每一個定時器都有一個標識 id，而標識 id 就在 setInterval 返回的就是當前產生的 定時器的id
+          /* 而由於是 2個作用域/2個函數，我們要看到同一個東西，要存在一個大家都能看到的地方，所以我們可以把它們放到我們都能看到的對象裡面
+             2個函數 看到同一個東西，就把一個放，一個讀。
+             而我們都能看到組件對象，我們是同一個組件對象的方法，所以我們不用定義變量 （const intervalId），而是用 this.intervalId，
+             （如果兩個函數想看到同一個東西，就想辦法把它們放到兩者都能看到的地方，而看到的地方就是同一個對象裡面）
+             */
+      }
+
+      distoryComponent () {
+          ReactDOM.unmountComponentAtNode(document.getElementById("test"))
+      }
+
+      render(){
+          // 在某一個時刻啟動循環定時器，我們要在 render 裡面啟動循環定時器，因為當 render 發生改變，就會重新調用。
+          // 在啟動定時器時，我們要修改 opacity狀態，一旦修改狀態就要 渲染以下的組件，所以要調用 render =（渲染組件的意思）
+          const {opacity} = this.state
+
+          return (
+              <div>
+              {/** {{}} 兩個大括號的區別是，外面的大括號代表裡面要寫 js 代碼，裡面大括號代表要寫對象 */}
+              <h2 style={{opacity: opacity}}>{this.props.msg}</h2>
+              <button onClick={this.distoryComponent}>不活了</button>
+              </div>
+
+          )
+      }
+  }
+
+  ReactDOM.render(<Life msg="react太難了！"/>,document.getElementById("test"))
+  
+  </script>
+  </body>
+</html>

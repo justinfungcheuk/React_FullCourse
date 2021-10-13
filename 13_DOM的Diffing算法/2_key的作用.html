@@ -20,10 +20,10 @@
 
   <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
   
-  /**
+  /** diff 就是 difference 的意思！！！！！！不同 
    * 
    * 经典面试题:
-      1). react/vue中的key有什么作用？（key的内部原理是什么？）
+      1). react/vue中。你遍歷的時候，所指定的那個 key 有什么作用？（key的内部原理是什么？）
       2). 为什么遍历列表时，key最好不要用index?
       
 			1. 虚拟DOM中key的作用：
@@ -33,10 +33,10 @@
 												随后React进行【新虚拟DOM】与【旧虚拟DOM】的diff比较，比较规则如下：
 
 									a. 旧虚拟DOM中找到了与新虚拟DOM相同的key：
-												(1).若虚拟DOM中内容没变, 直接使用之前的真实DOM
-												(2).若虚拟DOM中内容变了, 则生成新的真实DOM，随后替换掉页面中之前的真实DOM
+												(1).若虚拟DOM中内容没变（意思就是大家的 key 是一樣的）, 直接使用之前的真实DOM
+												(2).若虚拟DOM中内容变了 （不能重新使用舊的虛擬DOM到新的）, 则生成新的真实DOM，随后替换掉页面中之前的真实DOM
 
-									b. 旧虚拟DOM中未找到与新虚拟DOM相同的key
+									b. 旧虚拟DOM中未找到与新虚拟DOM相同的key （例如：新的有 key = 1，就的沒有 key = 1）
 												根据数据创建新的真实DOM，随后渲染到到页面
 									
 			2. 用index作为key可能会引发的问题：
@@ -55,7 +55,12 @@
 
                                 
 
-   * 
+   
+
+
+
+
+
    * 
    * 慢動作回放----使用 index 索引值做為 key
    * 
@@ -70,12 +75,16 @@
    * {id:3,name:'小王',age:20},
    * {id:1,name:'小張',age:18},
    * {id:2,name:'小李',age:19},
+   *   
+   * 
    * 更新數據後的虛擬DOM：
-   * {id:0,name:'小王',age:20<input type="text"/>}, 轉成 真實DOM，放到頁面
-   * {id:1,name:'小張',age:18<input type="text"/>}, 轉成 真實DOM，放到頁面
-   * {id:2,name:'小李',age:19<input type="text"/>}, 轉成 真實DOM，放到頁面
+   * <li key=0>name:小王---20<input type="text"/></li>, 轉成 真實DOM，放到頁面。 而因為key=0的關係，導致小張的訊息存留在小王的 input框裡面。
+   * <li key=1>name:小張---18<input type="text"/></li>, 轉成 真實DOM，放到頁面。 而因為key=1的關係，導致小李的訊息存留在小張的 input框裡面。
+   * <li key=2>name:小李---19<input type="text"/></li>, 轉成 真實DOM，放到頁面。 而因為key=2的關係，導致小李的訊息存留著一個空號在 input框裡面。
    * - 因為用了 index索引值 做為 key，而小王是放在前面，所以把順序打亂了，因此用了三次的真實DOM更新，不能重複使用 初始的虛擬DOM
    * - 其實我們可以用每一條數據的唯一標識作為索引值就可以重複使用初始的虛擬DOM，可以用 id 來做為數據的索引值
+   * 
+   * 
    * 
    * -------------------------------------------------------------------
    * 
@@ -85,17 +94,17 @@
    *     {id:1,name:'小張',age:18},
    *     {id:2,name:'小李',age:19},
    * 初始的虛擬DOM：轉成真實DOM掛載到頁面
-   *     <li key=0>{小張}---{18}<input type="text"/></li> // 先遍歷的 key 是 0
-   *     <li key=1>{小李}---{19}<input type="text"/></li> // 後遍歷的 key 是 1
+   *     <li key=1>{小張}---{18}<input type="text"/></li> // 先遍歷的 key 是 0
+   *     <li key=2>{小李}---{19}<input type="text"/></li> // 後遍歷的 key 是 1
    * 
    * 更新後的數據： 小王的 id 為幾？ 就是數組的長度加+1
    * {id:3,name:'小王',age:20},
    * {id:1,name:'小張',age:18},
    * {id:2,name:'小李',age:19},
    * 更新數據後的虛擬DOM：
-   * {id:3,name:'小王',age:20}, 轉成 真實DOM，放到頁面
-   * {id:1,name:'小張',age:18}, 該虛擬DOM 不再生成新的虛擬DOM，也不再放到頁面，因為它已經在初始的虛擬DOM時，在頁面生成了真實DOM，可以直接復用
-   * {id:2,name:'小李',age:19}, 該虛擬DOM 不再生成新的虛擬DOM，也不再放到頁面，因為它已經在初始的虛擬DOM時，在頁面生成了真實DOM，可以直接復用
+   * <li key=3>小王---20<input type="text"/></li>,, 轉成 真實DOM，放到頁面
+   * <li key=1>小張---18<input type="text"/></li>,, 該虛擬DOM 不再生成新的虛擬DOM，也不再放到頁面，因為它已經在初始的虛擬DOM時，在頁面生成了真實DOM，可以直接復用
+   * <li key=2>小李---19<input type="text"/></li>,, 該虛擬DOM 不再生成新的虛擬DOM，也不再放到頁面，因為它已經在初始的虛擬DOM時，在頁面生成了真實DOM，可以直接復用
    * 
    * - 因為用了 index索引值 做為 key，而小王是放在前面，所以把順序打亂了，因此用了三次的真實DOM更新，不能重複使用 初始的虛擬DOM
    * - 其實我們可以用每一條數據的唯一標識作為索引值就可以重複使用初始的虛擬DOM，可以用 id 來做為數據的索引值
@@ -107,7 +116,7 @@
   class Person extends React.Component{
 
     state = {
-        persons:[
+        persons:[ // 根據 id 來做出相關的增刪改差，所以必須要有 id 作為唯一的標識
             {id:1,name:'小張',age:18},
             {id:2,name:'小李',age:19},
         ]
@@ -115,9 +124,10 @@
 
     add = ()=>{
         const {persons} = this.state // 獲取有多少個人
-        // id 是自增長的，所以要用 id:persons.length+1
+        // id 是自增長的，所以要用數組的長度 +1， id:persons.length+1
         const p = {id:persons.length+1,name:'小王',age:20}
-        this.setState({persons:[p,...persons]}) // 把原來的人放在裡面 ...persons，和把新加進來的放在前方 p
+        this.setState({persons:[p,...persons]}) // persons: 就是把原來的人放在裡面
+        // p 代表把新加進來的放在前方 和 ...persons，把原來的人放在裡面
     }
 
     render(){
@@ -138,7 +148,7 @@
             <h3>使用id (數據的唯一標識) 做為key</h3>
             <ul>
             { //遍歷 li, 而拿到的每一個 li 都是一個人的對象
-                this.state.persons.map((personObj,index)=>{
+                this.state.persons.map((personObj)=>{
                     return <li key={personObj.id}>{personObj.name}---{personObj.age}<input type="text"/></li> // 遍歷的時候必須要用 key
                 })
             }
