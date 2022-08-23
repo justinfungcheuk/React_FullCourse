@@ -1,55 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 移動端適配 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>1_引出生命週期</title>
-</head>
+  </head>
   <body>
-  <!-- 準備好一個 "容器" -->
-  <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
-  <div id="test"></div>
+    <!-- 準備好一個 "容器" -->
+    <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
+    <div id="test"></div>
 
-  <!-- 引入 react 核心庫 -->
-  <script type="text/javascript" src="../js/react.development.js"></script>
-  <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
-  <script type="text/javascript" src="../js/react-dom.development.js"></script>
-  <!-- 引入 babel, 用於將 jsx 專為 js -->
-  <script type="text/javascript" src="../js/babel.min.js"></script>
+    <!-- 引入 react 核心庫 -->
+    <script type="text/javascript" src="../js/react.development.js"></script>
+    <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
+    <script
+      type="text/javascript"
+      src="../js/react-dom.development.js"
+    ></script>
+    <!-- 引入 babel, 用於將 jsx 專為 js -->
+    <script type="text/javascript" src="../js/babel.min.js"></script>
 
-  <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
-  // 創建組件
-  // 生命週期回調函數 = 生命週期鈎子函數 = 生命週期函數 = 生命週期鉤子
-  // 掛載 mount
-  // 卸載 unmount
-  class Life extends React.Component{
+    <script type="text/babel">
+      // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+      // 創建組件
+      // 生命週期回調函數 = 生命週期鈎子函數 = 生命週期函數 = 生命週期鉤子
+      // 掛載 mount
+      // 卸載 unmount
+      class Life extends React.Component {
+        state = { opacity: 1 }; // 代表狀態有個透明度持續在變化，而一開始是 1 代表它是完全顯示的
+        // 我們可以透過 在 h2 裡面寫樣式代碼 style={{opacity:this.state.opacity}} 就可以透過 opacity 來控制 h2
 
-      state = {opacity:1} // 代表狀態有個透明度持續在變化，而一開始是 1 代表它是完全顯示的
-      // 我們可以透過 在 h2 裡面寫樣式代碼 style={{opacity:this.state.opacity}} 就可以透過 opacity 來控制 h2 
+        death = () => {
+          // 當點擊了 不活了 按鈕，就會執行 death
+          // death 是作為一個事件 onClick={this.death} 的回調使用，所以 death 要用賦值語句+箭頭函數
 
-      death = ()=>{ // 當點擊了 不活了 按鈕，就會執行 death
-        // death 是作為一個事件 onClick={this.death} 的回調使用，所以 death 要用賦值語句+箭頭函數
-        
-        /*但是，componentDidMount(){} 是和 render 同一個級別的，是由 react 弄出來的 Life實例對象，直接借助這個實例對象.render，
+          /*但是，componentDidMount(){} 是和 render 同一個級別的，是由 react 弄出來的 Life實例對象，直接借助這個實例對象.render，
         然後再.componentDidMount 去幫我們調用，所以不用寫賦值語句和箭頭函數
         */
-          
 
           //清除定時器
           //clearInterval(this.timer)
 
-
-
           //卸载组件 - 在那個節點的組件要被卸載
-          ReactDOM.unmountComponentAtNode(document.getElementById('test'))
+          ReactDOM.unmountComponentAtNode(document.getElementById("test"));
           /**
-           * 有很多容器，我們必須說明是卸載那一個容器的組件要被卸載，因為容器是多個的。我們要特別指定那一個容器要被寫在，
+           * 有很多容器，我們必須說明是卸載那一個容器的組件要被卸載，因為容器是多個的。我們要特別指定那一個容器要被卸載，
            * 所以我們要使用 unmountComponentAtNode 代表 卸載組件在那一個節點裡
            * ReactDOM.unmountComponentAtNode(document.getElementById('test')) 卸载组件 - 在那個節點的組件要被卸載
            */
-      }
-      /**
+        };
+        /**
        * 在 2_類式組件
        * 執行了 ReactDOM.render(<MyComponent/>,document.getElementById('test')) 之後，發生了什麼？
          1. React 解析組件標籤，找到了 MyComponent 組件。
@@ -58,43 +60,44 @@
          - 在第2個步驟，通過了 new 出來該類的實例.render 調了 render，其實它還通過這個實例.調用了render的一個兄弟，而且調用 render 的兄弟只調了一次，
          而且這一次的時間點就是在組件掛載到頁面之後。而這個兄弟的名稱為：componentDidMount(){}
        */
-      // 組件掛載完畢 React 幫你調，只調用一次
-      componentDidMount(){
-        /*
+        // 組件掛載完畢 React 幫你調，只調用一次
+        componentDidMount() {
+          /*
         從 1_類的基本知識，由於 類 裡面可以寫 構造器constructor，自定義的方法 例如：speak()，和 賦值語句 例如：a = 1 或 wheel = 4 還有 聲明 static demo = 100 的賦值語句，
-        其他就不能寫，所欲由於 setInterval 不是我們的函數體，所以如果你直接只寫 setInterval(() => {},200); 只可以寫在 render 裡面，不可以寫在類裡面
+        其他就不能寫，所以由於 setInterval 不是我們的函數體，所以如果你直接只寫 setInterval(() => {},200); 只可以寫在 render 裡面，不可以寫在類裡面
 
            * 每隔 200 毫秒都要去狀態裡面取一下現在的透明度是多少 - state = {opacity:1}
            把當前的透明度減少 0.1，然後再用 setState 把減完 0.1 的值再賦回去 state={opacity:1}
            */
           // 當組件完成掛載到頁面後，就開啟定時器
-          this.timer = setInterval(() => { 
-              // 把 setInterval 定時器的 id 掛載 組件實例自身上 （this 代表 Life 的組件實例對象）
-              // 所以 clearInterval(this.timer) 裡面的 this 也是代表 Life 的組件實例對象
-               
-              // 獲取原狀態
-               let {opacity} = this.state // 因為 const 聲明的變量不能更改，所以要寫 let
-               // 減小 0.1
-               opacity -= 0.1
-               // 如果透明度比 0 還小 或者等於 0，就直接變成 1，再賦值到 this.setState({opacity})，所以要用 if，避免了 opacity 到 0 之後還一直向下減
-               if(opacity <= 0) opacity = 1 
-               // 設置新的透明度
-               this.setState({opacity}) // 要修改的狀態是 opacity 
-           },200); //每隔 200 毫秒都要去狀態裡面取一下現在的透明度是多少
-      }
+          this.timer = setInterval(() => {
+            // 把 setInterval 定時器的 id 掛載 組件實例自身上 （this 代表 Life 的組件實例對象）
+            // 所以 clearInterval(this.timer) 裡面的 this 也是代表 Life 的組件實例對象
 
-      // 組件將要卸載 React
-      componentWillUnmount(){ //該函數的調用時機
+            // 獲取原狀態
+            let { opacity } = this.state; // 因為 const 聲明的變量不能更改，所以要寫 let
+            // 減小 0.1
+            opacity -= 0.1;
+            // 如果透明度比 0 還小 或者等於 0，就直接變成 1，再賦值到 this.setState({opacity})，所以要用 if，避免了 opacity 到 0 之後還一直向下減
+            if (opacity <= 0) opacity = 1;
+            // 設置新的透明度
+            this.setState({ opacity }); // 要修改的狀態是 opacity
+          }, 200); //每隔 200 毫秒都要去狀態裡面取一下現在的透明度是多少
+        }
+
+        // 組件將要卸載 React
+        componentWillUnmount() {
+          //該函數的調用時機
           //清除定時器
-          clearInterval(this.timer)
-      }
+          clearInterval(this.timer);
+        }
 
-      /* render 調用的時機有 2個：1. 初始化渲染頁面的展示 還有 2. 狀態更新之後（只要更改狀態，react 就會幫你重新調 render）
+        /* render 調用的時機有 2個：1. 初始化渲染頁面的展示 還有 2. 狀態更新之後（只要更改狀態，react 就會幫你重新調 render）
          頁面一開始的時候，React 就會幫你 new 一個 Life 的實例，然後通過這個實例.render(){}調用，定時器 setInterval就開始運行（每隔200毫秒執行一次）
          之後就會運行 return， 就能拿到一些結構展示到頁面
          - 所以render調用的是 1+n次，不能把 定時器 放在 render 裡面
         */
-      render(){
+        render() {
           /**
            * setInterval(() => { // setInterval 定時器的 id 掛在 this 代表實例Life 組件自身上
                // 獲取原狀態
@@ -107,37 +110,36 @@
                this.setState({opacity}) // 要修改的狀態是 opacity
            },200); //每隔 200 毫秒都要去狀態裡面取一下現在的透明度是多少
            */
-          console.log('render');
-          return(
-          <div>
-          <h2 style={{opacity:this.state.opacity}}>React學不會怎麼辦</h2>
-          <button onClick={this.death}>不活了</button>
-          </div>
-          )
+          console.log("render");
+          return (
+            <div>
+              <h2 style={{ opacity: this.state.opacity }}>React學不會怎麼辦</h2>
+              <button onClick={this.death}>不活了</button>
+            </div>
+          );
+        }
       }
-  }
-  // 渲染組件
-  ReactDOM.render(<Life/>,document.getElementById('test'))
+      // 渲染組件
+      ReactDOM.render(<Life />, document.getElementById("test"));
 
-  /**
-   * 總結：
-   * 1. 頁面要有出現組件，掛載到頁面上，該組件就要調用 render，
-   * 2. 當組件掛載完畢，就會幫你調用 componentDidMount(){}，
-   * 3. 當該組件將要被卸載，React 就會幫你調用 componentWillUnmount(){}
-   * 
-   * 組件的生命週期 就好像 人的生命週期
-   * 
-   * 將要出生 - 起名字
-   * 出生了   - 嬰兒用品 - componentDidMount
-   * 
-   * 會說話了  - 紀錄一下
-   * 會走路了  - 紀錄一下
-   * 上小學了  - 紀錄一下
-   * 
-   * 病危了    - 交代後事 - componentWillUnmount 
-   *
-   */
-  
-  </script>
+      /**
+       * 總結：
+       * 1. 頁面要有出現組件，掛載到頁面上，該組件就要調用 render，
+       * 2. 當組件掛載完畢，就會幫你調用 componentDidMount(){}，
+       * 3. 當該組件將要被卸載，React 就會幫你調用 componentWillUnmount(){}
+       *
+       * 組件的生命週期 就好像 人的生命週期
+       *
+       * 將要出生 - 起名字
+       * 出生了   - 嬰兒用品 - componentDidMount
+       *
+       * 會說話了  - 紀錄一下
+       * 會走路了  - 紀錄一下
+       * 上小學了  - 紀錄一下
+       *
+       * 病危了    - 交代後事 - componentWillUnmount
+       *
+       */
+    </script>
   </body>
 </html>

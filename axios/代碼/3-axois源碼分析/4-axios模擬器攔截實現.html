@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>axios攔截器</title>
+    <link
+      crossorigin="annoymous"
+      href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> -->
+  </head>
+  <body>
+    <div class="container">
+      <h2 class="page-header">其他使用</h2>
+      <button class="btn btn-primary">發送GET請求</button>
+      <button class="btn btn-warning">發送POST請求</button>
+      <button class="btn btn-success">發送PUT請求</button>
+      <button class="btn btn-danger">發送DELETE請求</button>
+    </div>
+    <script>
+      // 構造函數
+      function Axios(config) {
+        this.config = config;
+        this.interceptors = {
+          request: new InterceptorManager(),
+          response: new InterceptorManager(),
+        };
+      }
+      // request 發送請求 - 難點與重點 - request方法的實現
+      Axios.prototype.request = function (config) {
+        // 創建一個 promise 對象
+        let promise = Promise.resolve(config);
+        // 創建一個數組
+        const chains = [dispatchRequest, undefined]; // dispatchRequest 負責發送請求回調，undefined 的作用是負責正常的跳轉請求攔截器和響應攔截器
+        // 處理攔截器
+        // 請求攔截器 - 將請求攔截器的回調 放入到 chains 的前面 - 也就是放到 [前面 dispatchRequest, undefined]; 的前面
+        // 所以要遍歷 request.handles，因為 request該屬性上面有 handles該屬性，而它裡面存的就是數組[] - request.handles = []
+        // console.log(this.interceptors.request.handlers); // 獲取 request 攔截器對象handlers，獲取到該對象後我們再遍歷它
+        // 並且 handlers對象裡面存放的就是請求攔截器的回調 - 也就是所有的 {fulfilled, rejected}
+        this.interceptors.request.handlers.forEach((item) => {
+          // item 的每一個元素都是一個對象
+          chains.unshift(item.fulfilled, item.rejected);
+          // unshift()方法是往數組的前面添加 - 把請求攔截器往前面放
+        });
+        // console.log(chains);
+
+        //響應攔截器
+        this.interceptors.response.handlers.forEach((item) => {
+          chains.push(item.fulfilled, item.rejected);
+          // push 把響應攔截器往後面放
+        });
+        // console.log(chains);
+
+        // 遍歷 - 整合一個大數組 - 通過 promise鏈條的方式去執行數組裡面的回調
+        while (chains.length > 0) {
+          // 此處不能等於 0，必須要大於 0。因為最後我們運行完成後，chains不會再有元素，它是一個空的數組，會導致死循環，所以不能 = 0
+          promise = promise.then(chains.shift(), chains.shift()); // 從數組當中取出回調
+          // 也就是把數組中的 請求攔截器2號成功回調/失敗回調，1號，等等順序取出
+          // 如果成功了就執行成功回調
+          // 所以請求攔截器是成功後，請求就會發出去，就會執行 dispatchRequest，它是做一個發送請求
+          // 請求攔截器完成後，就會繼續執行響應攔截器
+          // 最後再 return promise 就可以
+        }
+        return promise;
+      };
+
+      //發送請求
+      function dispatchRequest(config) {
+        // 返回一個 Promise 隊形
+        return new Promise((resolve, reject) => {
+          // request 必須返回 Promise，否則不能使用 axios().then()方法
+          resolve({
+            status: 200,
+            statusText: "OK",
+          });
+        });
+      }
+
+      // 創建實例
+      let context = new Axios({});
+      //創建 axios函數
+      let axios = Axios.prototype.request.bind(context);
+      //將 context 屬性 config , interceptors 添加至 axios函數對象身上
+      Object.keys(context).forEach((key) => {
+        axios[key] = context[key];
+      });
+
+      // 攔截器管理器的構造函數 - 通過它保存回調
+      function InterceptorManager() {
+        this.handlers = []; // 在實例對象上加一個屬性叫 handlers
+      }
+      InterceptorManager.prototype.use = function (fulfilled, rejected) {
+        this.handlers.push({
+          fulfilled,
+          rejected,
+          // 只要調用 use，就把該兩個函數 function one 和 function two 做成一個對象 - fulfiled,rejected，
+          // 再把它們放到 實例對象 handlers屬性當中的數組[]裡面
+        });
+      };
+      //以上為封裝代碼
+
+      //以下為功能測試代碼
+
+      // 與 Promise相關，攔截器的內部原理也是由 Promise 對成功和失敗回調作指令
+      // Add a request interceptor - 設置請求攔截器
+
+      // config 配置對象 - 在請求攔截器當中，我們是可以對 config進行處理和調整
+      axios.interceptors.request.use(
+        function one(config) {
+          console.log("請求攔截器 成功 - 1號");
+          // 例如：修改 config 中的參數
+          // Do something before request is sent
+          return config;
+          // throw "參數出了問題";
+        },
+        function one(error) {
+          console.log("請求攔截器 失敗 - 1號");
+          // Do something with request error
+          return Promise.reject(error);
+        }
+      );
+
+      axios.interceptors.request.use(
+        function two(config) {
+          console.log("請求攔截器 成功 - 2號");
+          // Do something before request is sent
+          return config;
+        },
+        function two(error) {
+          console.log("請求攔截器 失敗 - 2號");
+          // Do something with request error
+          return Promise.reject(error);
+        }
+      );
+
+      // Add a response interceptor - 設置響應攔截器
+      axios.interceptors.response.use(
+        function (response) {
+          console.log("響應攔截器 成功 - 1號");
+          // Any status code that lie within the range of 2xx cause this function to trigger
+          // Do something with response data
+          // return response;
+          return response; // 對響應結果作一些處理，或錯誤處理和判斷處理
+          // 這裡我們對響應結果只需要獲得響應體
+        },
+        function (error) {
+          console.log("響應攔截器 失敗 - 1號");
+          // Any status codes that falls outside the range of 2xx cause this function to trigger
+          // Do something with response error
+          return Promise.reject(error);
+        }
+      );
+
+      axios.interceptors.response.use(
+        function (response) {
+          console.log("響應攔截器 成功 - 2號");
+          // Any status code that lie within the range of 2xx cause this function to trigger
+          // Do something with response data
+          return response;
+        },
+        function (error) {
+          console.log("響應攔截器 失敗 - 2號");
+          // Any status codes that falls outside the range of 2xx cause this function to trigger
+          // Do something with response error
+          return Promise.reject(error);
+        }
+      );
+
+      // 發送請求
+      axios({
+        method: "GET",
+        url: "http://localhost:3000/posts",
+      }).then((response) => {
+        console.log("自定義回調處理成功的結果");
+        console.log(response);
+      });
+    </script>
+  </body>
+</html>

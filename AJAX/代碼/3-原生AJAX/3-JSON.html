@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JSON響應</title>
+    <style>
+      #result {
+        width: 200px;
+        height: 100px;
+        border: solid 1px #89b;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="result"></div>
+    <script>
+      const result = document.getElementById("result");
+      // 綁定鍵盤按下事件
+      window.onkeydown = function () {
+        // 發送請求
+        const xhr = new XMLHttpRequest();
+        // 設置響應體數據的類型
+        xhr.responseType = "json";
+        // 初始化
+        xhr.open("GET", "http://127.0.0.1:8000/json-server");
+        // 發送
+        xhr.send();
+        // 事件綁定
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4) {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              //   console.log(xhr.response);
+              //   result.innerHTML = xhr.response;
+              // 1. 手動對數據轉換 - 因為當服務器返回的結果是一個字符串時，所以我們要把 xhr.response 返回的字符串把該字符串轉換成一個對象，要使用 JSON.parse()
+              // let data = JSON.parse(xhr.response);
+              // console.log(data);
+              // result.innerHTML = data.name;
+
+              // 2. 自動對數據進行轉換 - 借助 xhr對象上的一個屬性進行設置 - xhr.responseType = "json";
+              console.log(xhr.response);
+              result.innerHTML = xhr.response.name;
+            }
+          }
+        };
+      };
+    </script>
+  </body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Promise - 封裝 ｜ 16 - 回調函數【異步執行】</title>
+    <script src="./promise.js"></script>
+  </head>
+  <body>
+    <script>
+      //實例化對象
+      let p1 = new Promise((resolve, reject) => {
+        // setTimeout(() => {
+        // resolve("OK");
+        reject("OK");
+        console.log(111);
+        // }, 1000);
+      });
+
+      p1.then(
+        (value) => {
+          console.log(222); // 該課題的回調函數指的是 then的回調函數 value => {}
+          // 且該 then的回調函數是異步執行的 - 在其他同步代碼執行完後才執行 then的回調函數-異步執行
+        },
+        (reason) => {
+          console.log(444);
+        }
+      );
+
+      console.log(333);
+    </script>
+  </body>
+</html>

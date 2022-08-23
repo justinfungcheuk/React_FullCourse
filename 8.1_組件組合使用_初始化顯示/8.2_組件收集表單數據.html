@@ -1,25 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 移動端適配 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>8.2_組件收集表單數據</title>
-</head>
+  </head>
   <body>
-  <!-- 準備好一個 "容器" -->
-  <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
-  <div id="test"></div>
+    <!-- 準備好一個 "容器" -->
+    <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
+    <div id="test"></div>
 
-  <!-- 引入 react 核心庫 -->
-  <script type="text/javascript" src="../js/17.0.1/react.development.js"></script>
-  <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
-  <script type="text/javascript" src="../js/17.0.1/react-dom.development.js"></script>
-  <!-- 引入 babel, 用於將 jsx 專為 js -->
-  <script type="text/javascript" src="../js/17.0.1/babel.min.js"></script>
+    <!-- 引入 react 核心庫 -->
+    <script
+      type="text/javascript"
+      src="../js/17.0.1/react.development.js"
+    ></script>
+    <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
+    <script
+      type="text/javascript"
+      src="../js/17.0.1/react-dom.development.js"
+    ></script>
+    <!-- 引入 babel, 用於將 jsx 專為 js -->
+    <script type="text/javascript" src="../js/17.0.1/babel.min.js"></script>
 
-  <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
-  /**
+    <script type="text/babel">
+      // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+      /**
   需求：自定義包含表單的組件
   1. 界面如下所示
   2. 輸入用戶名密碼後，點擊登錄提示輸入信息
@@ -32,58 +40,67 @@
   它是受控組件，自動收集到我們的密碼裡面面，const {pwd} = this.state。
 
   2. 非受控組件： 需要時才手動讀取表單輸入框中的數據
-  - 例如：用戶名: <input type="tetx" ref={input => this.nameInput = input}/> {/** ref= 的第一個 input 是形参， 
+  - 例如：用戶名: <input type="text" ref={input => this.nameInput = input}/> {/** ref= 的第一個 input 是形参， 
   它是非受控組件，需要的時候就 const name = this.nameInput.value，自己讀取。
    */
 
-   // 阻止事件的默認行為(提交)
-   // event.preventDefault()
-   
-   class LoginForm extends React.Component {
+      // 阻止事件的默認行為(提交)
+      // event.preventDefault()
 
-       constructor (props) {
-           super(props)
+      class LoginForm extends React.Component {
+        constructor(props) {
+          super(props);
 
-           // 初始化狀態
-           this.state = {
-               pwd: ''
-           }
+          // 初始化狀態
+          this.state = {
+            pwd: "",
+          };
 
-           this.handleSubmit = this.handleSubmit.bind(this)
-           this.handleChange = this.handleChange.bind(this)
+          this.handleSubmit = this.handleSubmit.bind(this);
+          this.handleChange = this.handleChange.bind(this);
+        }
 
-       }
+        handleSubmit(event) {
+          // 讀取用戶名的值
+          const name = this.nameInput.value; // 非受控組件 - 自己讀取，手動輸入框裡面讀取數據
+          // 讀取密碼的值
+          const { pwd } = this.state; // 受控組件 - 直接讀取狀態，自動收集（在修改時就會收集）
+          alert(`準備提交的用戶名為${name},密碼為${pwd}`);
+          // 阻止事件的默認行為(提交)
+          event.preventDefault();
+        }
 
-       handleSubmit (event){ 
-           // 讀取用戶名的值
-           const name = this.nameInput.value // 非受控組件 - 自己讀取，手動輸入框裡面讀取數據
-           // 讀取密碼的值
-           const {pwd} = this.state // 受控組件 - 直接讀取狀態，自動收集（在修改時就會收集）
-           alert(`準備提交的用戶名為${name},密碼為${pwd}`)
-           // 阻止事件的默認行為(提交)
-           event.preventDefault()
-       }
+        handleChange(event) {
+          // 讀取當前輸入框 的值 - 因為是當前的值，所以可以直接用 event.target.value
+          const pwd = event.target.value; // 被操作的東西 和 事件 onChange 是操作同一個元素 input，就用 event -重點！
+          // 更新 pwd 的狀態
+          this.setState({ pwd });
+        }
+        render() {
+          return (
+            <form action="/test" onSubmit={this.handleSubmit}>
+              {" "}
+              {/** 添加一個確認事件 */}
+              用戶名:{" "}
+              <input
+                type="text"
+                ref={(input) => (this.nameInput = input)}
+              />{" "}
+              {/** ref= 的第一個 input 是形参 */}
+              密碼:{" "}
+              <input
+                type="password"
+                value={this.state.pwd}
+                onChange={this.handleChange}
+              />{" "}
+              {/** 當輸入密碼的時候會觸發 onChange 事件 */}
+              <input type="submit" value="登錄" />
+            </form>
+          );
+        }
+      }
 
-       handleChange (event){
-           // 讀取當前輸入框 的值 - 因為是當前的值，所以可以直接用 event.target.value
-           const pwd = event.target.value // 被操作的東西 和 事件 onChange 是操作同一個元素 input，就用 event
-           // 更新 pwd 的狀態
-           this.setState({pwd})
-       }
-       render(){
-
-           return(
-               <form action="/test" onSubmit={this.handleSubmit}> {/** 添加一個確認事件 */}
-               用戶名: <input type="tetx" ref={input => this.nameInput = input}/> {/** ref= 的第一個 input 是形参 */}
-               密碼: <input type="password" value={this.state.pwd} onChange={this.handleChange}/> {/** 當輸入密碼的時候會觸發 onChange 事件 */}
-               <input type="submit" value="登錄"/>
-               </form>
-           )
-       }
-   }
-
-   ReactDOM.render(<LoginForm/>,document.getElementById("test"))
-  
-  </script>
+      ReactDOM.render(<LoginForm />, document.getElementById("test"));
+    </script>
   </body>
 </html>

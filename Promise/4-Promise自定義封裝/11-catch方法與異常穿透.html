@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Promise - 封裝 ｜ 11 - catch方法與異常穿透</title>
+    <script src="./promise.js"></script>
+  </head>
+  <body>
+    <script>
+      //實例化對象
+      let p = new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve("OK");
+          //   reject("Error");
+        }, 1000);
+      });
+
+      //值傳遞
+      p.then() // 沒有指定參數，可以為他加上回調參數value => value;
+        .then((value) => {
+          console.log(222);
+        })
+        .then((value) => {
+          console.log(333);
+        })
+        .catch((reason) => {
+          console.warn(reason);
+        });
+    </script>
+  </body>
+</html>

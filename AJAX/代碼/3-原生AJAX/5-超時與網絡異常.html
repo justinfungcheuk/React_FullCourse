@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>請求超時與網絡異常</title>
+    <style>
+      #result {
+        width: 200px;
+        height: 100px;
+        border: solid 1px #90b;
+      }
+    </style>
+  </head>
+  <body>
+    <button>點擊發送請求</button>
+    <div id="result"></div>
+    <script>
+      const btn = document.getElementsByTagName("button")[0];
+      const result = document.querySelector("#result");
+
+      btn.addEventListener("click", function () {
+        const xhr = new XMLHttpRequest();
+        // 超時設置 2s 設置
+        xhr.timeout = 2000; // 當 2s 後還沒有請求回來，就把請求做一個取消
+        // 超時回調
+        xhr.ontimeout = function () {
+          alert("網絡異常，請稍候重試！！");
+        };
+        // 網絡異常回調
+        xhr.onerror = function(){
+            alert("你的網絡出了問題！")；
+        }
+
+        xhr.open("GET", "http://127.0.0.1:8000/delay");
+        // Date.now() 能夠獲取當前的時間戳，就可以知道這次點和下次點的時間一定不一樣，所以瀏覽器會認為這是兩次的不同的請求，因為 url是不一樣的，此時就會重新發出一個新的請求，而不會走本地緩存
+        // 在 Date.now() 時間戳的影響下就會導致不會走緩存，而是會向服務器再發送請求獲取新的結果
+        // 所以我們加上該參數：Date.now()，就可以達到每一次獲取的值都是不一樣的，就可以把 IE緩存問題解決
+
+        xhr.send();
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4) {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              result.innerHTML = xhr.response;
+            }
+          }
+        };
+      });
+    </script>
+  </body>
+</html>

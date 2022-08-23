@@ -1,50 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 移動端適配 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>state</title>
-</head>
+  </head>
   <body>
-  <!-- 準備好一個 "容器" -->
-  <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
-  <div id="test"></div>
+    <!-- 準備好一個 "容器" -->
+    <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
+    <div id="test"></div>
 
-  <!-- 引入 react 核心庫 -->
-  <script type="text/javascript" src="../js/react.development.js"></script>
-  <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
-  <script type="text/javascript" src="../js/react-dom.development.js"></script>
-  <!-- 引入 babel, 用於將 jsx 專為 js -->
-  <script type="text/javascript" src="../js/babel.min.js"></script>
+    <!-- 引入 react 核心庫 -->
+    <script type="text/javascript" src="../js/react.development.js"></script>
+    <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
+    <script
+      type="text/javascript"
+      src="../js/react-dom.development.js"
+    ></script>
+    <!-- 引入 babel, 用於將 jsx 專為 js -->
+    <script type="text/javascript" src="../js/babel.min.js"></script>
 
-  <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
-  // 1. 創建組件
-  class Weather extends React.Component{ 
-      // state 是在 Weather 類 的實例對象身上
-      // 如果要對 類 的 實例對象 進行初始化的操作 （例如：增加一個屬性，或者 修改一個屬性裡的值 ）就需要借助 類的構造器 constructor
-      // 因為 Weather 的實例自身的 state 的值為 null，無法滿足我們的需求，而我們要把 isHot 放進去，這就是一個初始化的動作，就要寫 構造器constructor
+    <script type="text/babel">
+      // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+      // 1. 創建組件
+      class Weather extends React.Component {
+        // state 是在 Weather 類 的實例對象身上
+        // 如果要對 類 的 實例對象 進行初始化的操作 （例如：增加一個屬性，或者 修改一個屬性裡的值 ）就需要借助 類的構造器 constructor
+        // 因為 Weather 的實例自身的 state 的值為 null，無法滿足我們的需求，而我們要把 isHot 放進去，這就是一個初始化的動作，就要寫 構造器constructor
 
-
-
-
-      // 在 構造器 constructor 裡面可以觸碰到組件實例對象，所以才能初始化狀態 this.state = {isHot:false, wind:'微風'}
-      // 構造器中的 this，無論是什麼類，你繼承不繼承，構造器中的 this 一定是當前 類 的實例對象，這是一個固定的結構！！！
-      // 構造器調用幾次？ -- 1次 （因為只寫了一次 Weather 標籤， React 就會幫你 new 出來一個 Weather 的實例，所以構造器也就執行了 1次）
-      constructor(props){
-          console.log('constructor'); // 構造器調用幾次？ -- 1次 
-          super(props) // 關於 this 的操作，必須放在 super 的後面
+        // 在 構造器 constructor 裡面可以觸碰到組件實例對象，所以才能初始化狀態 this.state = {isHot:false, wind:'微風'}
+        // 構造器中的 this，無論是什麼類，你繼承不繼承，構造器中的 this 一定是當前 類 的實例對象，這是一個固定的結構！！！
+        // 構造器調用幾次？ -- 1次 （因為只寫了一次 Weather 標籤， React 就會幫你 new 出來一個 Weather 的實例，所以構造器也就執行了 1次）
+        constructor(props) {
+          console.log("constructor"); // 構造器調用幾次？ -- 1次
+          super(props); // 關於 this 的操作，必須放在 super 的後面
           // super 就是原生JS class 的用法，可以調用父組件React.Component的方法!!!
 
           // 初始化狀態 - 透過 this 在 Weather 類身上做一些初始化的事情
-          this.state = {isHot:false, wind:'微風'} // this.state = {} 中括號代表 this.state 必須是一個對象，因為 Weather 不只是只有 isHot，還有可能是其他。
+          this.state = { isHot: false, wind: "微風" }; // this.state = {} 中括號代表 this.state 必須是一個對象，因為 Weather 不只是只有 isHot，還有可能是其他。
           // this.state = {key:value,key:value} 中括號{} 裡面是一組一組的 key:value
           // state 在 Weather 組件實例身上，所以我們可以往組件身上放東西 例如： this.state = {isHot:false, wind:'微風'}, 因為原本 state:null，我們要在一個對象裡面標識天氣熱不熱
           // 當我們放進去了 this.state = {isHot:false, wind:'微風'} ，就可以讀取它 return <h1 onClick={this.changeWeather}>今天天氣很{isHot?'炎熱':'涼爽'}</h1>
 
-
           // 解決 changeWeather 中 this 指向問題， 把 this 指向 Weather 的實例對象，而不是 undefind
-          this.changeWeather = this.changeWeather.bind(this) // 為事件處理函數綁定實例
+          this.changeWeather = this.changeWeather.bind(this); // 為事件處理函數綁定實例
           /* this.changeWeather.bind(this)
           第一個 this 是誰？ 構造器中的 this 是組件的實例對象
 
@@ -64,13 +65,11 @@
           因此執行完整個代碼：this.changeWeather = this.changeWeather.bind(this) ，你的實例對象自身就多了一個方法叫 changeWeather
           */
 
-
           // 把 changeWeather 的 this 指向是 Weather 的實例對象
           // 所以只要拿到了 Weather 的實例對象，才可以透過 this.state = {isHot:false} 來修改它的值
-      }
+        }
 
-
-      /* 舉例：關於解決類中的 this 指向問題
+        /* 舉例：關於解決類中的 this 指向問題
       this.demo = this.changeWeather.bind(this) 
       順著原型 this，找到原型對象上的那個 changeWeather，調用 .bind 生成了一個新的函數，並且把函數裡面的 (this) 改成了 Weather 的實例對象
       而這個新的函數，我掛在了實例自身的 demo 屬性上
@@ -80,30 +79,28 @@
       - 所以需要把它更改為 demo
       */
 
+        // 構造器調完了，實例才會出來，實例出來之後才能調 render，當狀態一發生更改，為了有一個最新的展示，必須要再調用 render，所以 render 會調用 1+n次
 
+        // 在 render 裡面，我的組件也是實例對象，所以可以從  const {isHot} = this.state 讀取東西
 
-// 構造器調完了，實例才會出來，實例出來之後才能調 render，當狀態一發生更改，為了有一個最新的展示，必須要再調用 render，所以 render 會調用 1+n次
-
-
-
-
-      // 在 render 裡面，我的組件也是實例對象，所以可以從  const {isHot} = this.state 讀取東西
-
-
-      // render 繼承了 React.Component 的原型對象，所以 render 有 setState
-      // render 調用幾次？ -- 1+n次，1 是初始化的那次， n 是狀態更新的次數
-      // 因為每一次修改狀態 this.setState，都會幫你調一次 render，重新拿到一個最新的返回值 return， 讓三元表達重新再運算一下，然後決定到底是炎熱還是涼爽
-      render(){ 
-          console.log('render'); // render 調用幾次？ -- 1+n次，1 是初始化的那次， n 是狀態更新的次數
+        // render 繼承了 React.Component 的原型對象，所以 render 有 setState
+        // render 調用幾次？ -- 1+n次，1 是初始化的那次， n 是狀態更新的次數
+        // 因為每一次修改狀態 this.setState，都會幫你調一次 render，重新拿到一個最新的返回值 return， 讓三元表達重新再運算一下，然後決定到底是炎熱還是涼爽
+        render() {
+          console.log("render"); // render 調用幾次？ -- 1+n次，1 是初始化的那次， n 是狀態更新的次數
           // console.log(this); // render 是誰？render 的 this 就是 Weather 的組件實例對象
           // 讀取狀態 - 可以讀其他狀態，例如：wind 有了初始化，就可以讀取
-          const {isHot,wind} = this.state // isHot = this.state.isHot
+          const { isHot, wind } = this.state; // isHot = this.state.isHot
           // render 是誰？render 裡面的 this 就是 Weather 的組件實例對象
 
           // 讀取狀態
-          return <h1 onClick={this.changeWeather}>今天天氣很{isHot?'炎熱':'涼爽'}, {wind}</h1> // 做判斷，決定顯示 true:炎熱 還是 false:涼爽
-      }  
-      /* 賦值語句: onClick={demo} - 這是 React 裡面的綁定事件
+          return (
+            <h1 onClick={this.changeWeather}>
+              今天天氣很{isHot ? "炎熱" : "涼爽"}, {wind}
+            </h1>
+          ); // 做判斷，決定顯示 true:炎熱 還是 false:涼爽
+        }
+        /* 賦值語句: onClick={demo} - 這是 React 裡面的綁定事件
       把右邊的 {demo} 函數，交給 onClick 作為回調
       當你點擊的時候， React 就會幫你調 demo
       - onClick 的 C 要寫大寫
@@ -111,62 +108,55 @@
       - 只要在指定好的函數 {demo} ，回頭它會幫你調用，當你點擊的時候它會幫你調用
       */
 
-      /*
+        /*
        onClick={this.changeWeather}，該部分的 changeWeather 沒有調 changeWeather
        - 只是通過 this 的類 的實例對象，沿著原型來查找找到 changeWeather，然後直接把該函數 changeWeather() 交給了 onClick 作為回調
        - 當你點擊 h1 的時候，就會直接從堆裡面把該函數拉出來，直接執行
        - 因此不是通過實例調用
       */
 
-
-
-      // 函數體裡面可以寫任意的代碼，但是 類 不行，所以 類 定義方法 只需要寫    changeWeather(){}
-      // changeWeather 調用幾次？ -- 點幾次調幾次
-      changeWeather(){ // 由於寫了上面的 this.changeWeather = this.changeWeather.bind(this) 這句話，
-      //所以 changeWeather(){} 裡面的 this 已經成功修改為 class Weather 的實例對象。
+        // 函數體裡面可以寫任意的代碼，但是 類 不行，所以 類 定義方法 只需要寫    changeWeather(){}
+        // changeWeather 調用幾次？ -- 點幾次調幾次
+        changeWeather() {
+          // 由於寫了上面的 this.changeWeather = this.changeWeather.bind(this) 這句話，
+          //所以 changeWeather(){} 裡面的 this 已經成功修改為 class Weather 的實例對象。
           // changeWeather 放在了哪裏？- Weather 的原型對象上，供實例使用
-          
+
           // 由於 changeWeather 是作為 onClick 的回調，所以不是通過實例調用的，是直接調用的
           // 類中的方法默認開啟了局部的嚴格模式，所以 changeWeather 中的 this 為 undefined
-          
 
-          console.log('changeWeather'); // changeWeather 調用幾次？ -- 點幾次調幾次
+          console.log("changeWeather"); // changeWeather 調用幾次？ -- 點幾次調幾次
           // 獲取原來的 isHot 值
-          const isHot = this.state.isHot
+          const isHot = this.state.isHot;
           // 嚴重注意：狀態必須通過 setState 進行 更新，且更新是一種合併(也就是說同名的會被複寫去了，不同名的會維持住)， 不是替換
-          this.setState({isHot:!isHot}) // 調用 this.setState 該方法是繼承在 React.Component 組件上
+          this.setState({ isHot: !isHot }); // 調用 this.setState 該方法是繼承在 React.Component 組件上
           // 在 React 當中，如果你要修改狀態，不要自己改，要用 setState 這個 API 去修改
           // 所以直接透過 Weather 實例對象的 this. 就可以找到 setState
           // this.setState({}) 可以直接傳入一個對象 {}
 
           // 嚴重注意： 狀態（state）不可直接更改，下面這行就是直接更改！！！
           // this.state.isHot = !isHot // 這是錯誤的寫法
-
+        }
       }
-  }
-  //2. 渲染組件到頁面
-  ReactDOM.render(<Weather/>,document.getElementById('test'))
+      //2. 渲染組件到頁面
+      ReactDOM.render(<Weather />, document.getElementById("test"));
 
-  /*
+      /*
   function demo(){
       console.log('標題被點擊了')
   }
   */
-  
 
-
-
-
-  /**
-   * 總結：
-   *  1. 需要在構造器裡面做初始化狀態
-   *  2. 構造器可以解決 this 指向問題
-   * 
-   *  3. render 裡面的 this 就是組件的實例對象， render 裡面做的最多的就是從狀態裡面讀取東西，然後根據狀態的值做展示
-   * 
-   *  4. changeWeather(){} 部分做的就是 獲取原來的值，再調用 setState(){} 更新狀態
-   * 
-   */
-  </script>
+      /**
+       * 總結：
+       *  1. 需要在構造器裡面做初始化狀態
+       *  2. 構造器可以解決 this 指向問題
+       *
+       *  3. render 裡面的 this 就是組件的實例對象， render 裡面做的最多的就是從狀態裡面讀取東西，然後根據狀態的值做展示
+       *
+       *  4. changeWeather(){} 部分做的就是 獲取原來的值，再調用 setState(){} 更新狀態
+       *
+       */
+    </script>
   </body>
 </html>

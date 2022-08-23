@@ -1,26 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 移動端適配 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>2_key的作用</title>
-</head>
+  </head>
   <body>
-  <!-- 準備好一個 "容器" -->
-  <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
-  <div id="test"></div>
+    <!-- 準備好一個 "容器" -->
+    <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
+    <div id="test"></div>
 
-  <!-- 引入 react 核心庫 -->
-  <script type="text/javascript" src="../js/17.0.1/react.development.js"></script>
-  <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
-  <script type="text/javascript" src="../js/17.0.1/react-dom.development.js"></script>
-  <!-- 引入 babel, 用於將 jsx 專為 js -->
-  <script type="text/javascript" src="../js/17.0.1/babel.min.js"></script>
+    <!-- 引入 react 核心庫 -->
+    <script
+      type="text/javascript"
+      src="../js/17.0.1/react.development.js"
+    ></script>
+    <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
+    <script
+      type="text/javascript"
+      src="../js/17.0.1/react-dom.development.js"
+    ></script>
+    <!-- 引入 babel, 用於將 jsx 專為 js -->
+    <script type="text/javascript" src="../js/17.0.1/babel.min.js"></script>
 
-  <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
-  
-  /** diff 就是 difference 的意思！！！！！！不同 
+    <script type="text/babel">
+      // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+
+      /** diff 就是 difference 的意思！！！！！！不同 
    * 
    * 经典面试题:
       1). react/vue中。你遍歷的時候，所指定的那個 key 有什么作用？（key的内部原理是什么？）
@@ -36,7 +44,7 @@
 												(1).若虚拟DOM中内容没变（意思就是大家的 key 是一樣的）, 直接使用之前的真实DOM
 												(2).若虚拟DOM中内容变了 （不能重新使用舊的虛擬DOM到新的）, 则生成新的真实DOM，随后替换掉页面中之前的真实DOM
 
-									b. 旧虚拟DOM中未找到与新虚拟DOM相同的key （例如：新的有 key = 1，就的沒有 key = 1）
+									b. 旧虚拟DOM中未找到与新虚拟DOM相同的key （例如：新的有 key = 1，舊的沒有 key = 1）
 												根据数据创建新的真实DOM，随后渲染到到页面
 									
 			2. 用index作为key可能会引发的问题：
@@ -112,53 +120,64 @@
    * - 只有真實DOM 才有 value 值，所以只有把東西放在了頁面上，當用戶輸入了東西，才有 .value值 來留下用戶的輸入
    */
 
-  // 1. 創建組件
-  class Person extends React.Component{
+      // 1. 創建組件
+      class Person extends React.Component {
+        state = {
+          persons: [
+            // 根據 id 來做出相關的增刪改差，所以必須要有 id 作為唯一的標識
+            { id: 1, name: "小張", age: 18 },
+            { id: 2, name: "小李", age: 19 },
+          ],
+        };
 
-    state = {
-        persons:[ // 根據 id 來做出相關的增刪改差，所以必須要有 id 作為唯一的標識
-            {id:1,name:'小張',age:18},
-            {id:2,name:'小李',age:19},
-        ]
-    }
+        add = () => {
+          const { persons } = this.state; // 獲取有多少個人
+          // id 是自增長的，所以要用數組的長度 +1， id:persons.length+1
+          const p = { id: persons.length + 1, name: "小王", age: 20 };
+          this.setState({ persons: [p, ...persons] }); // persons: 就是把原來的人放在裡面
+          // p 代表把新加進來的放在前方 和 ...persons，把原來的人放在裡面
+        };
 
-    add = ()=>{
-        const {persons} = this.state // 獲取有多少個人
-        // id 是自增長的，所以要用數組的長度 +1， id:persons.length+1
-        const p = {id:persons.length+1,name:'小王',age:20}
-        this.setState({persons:[p,...persons]}) // persons: 就是把原來的人放在裡面
-        // p 代表把新加進來的放在前方 和 ...persons，把原來的人放在裡面
-    }
-
-    render(){
-        return (
+        render() {
+          return (
             <div>
-            <h2>展示人員信息</h2>
-            <button onClick={this.add}>添加一個小王</button>
-            <h3>使用 index (索引值) 做為key</h3>
-            <ul>
-            { //遍歷 li, 而拿到的每一個 li 都是一個人的對象
-                this.state.persons.map((personObj,index)=>{
-                    return <li key={index}>{personObj.name}---{personObj.age}<input type="text"/></li> // 遍歷的時候必須要用 key
-                })
-            }
-            </ul>
-            <hr/>
-            <hr/>
-            <h3>使用id (數據的唯一標識) 做為key</h3>
-            <ul>
-            { //遍歷 li, 而拿到的每一個 li 都是一個人的對象
-                this.state.persons.map((personObj)=>{
-                    return <li key={personObj.id}>{personObj.name}---{personObj.age}<input type="text"/></li> // 遍歷的時候必須要用 key
-                })
-            }
-            </ul>
+              <h2>展示人員信息</h2>
+              <button onClick={this.add}>添加一個小王</button>
+              <h3>使用 index (索引值) 做為key</h3>
+              <ul>
+                {
+                  //遍歷 li, 而拿到的每一個 li 都是一個人的對象
+                  this.state.persons.map((personObj, index) => {
+                    return (
+                      <li key={index}>
+                        {personObj.name}---{personObj.age}
+                        <input type="text" />
+                      </li>
+                    ); // 遍歷的時候必須要用 key
+                  })
+                }
+              </ul>
+              <hr />
+              <hr />
+              <h3>使用id (數據的唯一標識) 做為key</h3>
+              <ul>
+                {
+                  //遍歷 li, 而拿到的每一個 li 都是一個人的對象
+                  this.state.persons.map((personObj) => {
+                    return (
+                      <li key={personObj.id}>
+                        {personObj.name}---{personObj.age}
+                        <input type="text" />
+                      </li>
+                    ); // 遍歷的時候必須要用 key
+                  })
+                }
+              </ul>
             </div>
-        )
-    }
-}
-  ReactDOM.render(<Person/>,document.getElementById('test'))
-  
-  </script>
+          );
+        }
+      }
+      ReactDOM.render(<Person />, document.getElementById("test"));
+    </script>
   </body>
 </html>

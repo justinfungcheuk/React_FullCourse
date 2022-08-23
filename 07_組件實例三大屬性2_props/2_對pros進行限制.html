@@ -1,46 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 移動端適配 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>2_對props進行使用</title>
-</head>
+  </head>
   <body>
-  <!-- 準備好一個 "容器" -->
-  <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
-  <div id="test1"></div>
-  <div id="test2"></div>
-  <div id="test3"></div>
+    <!-- 準備好一個 "容器" -->
+    <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
+    <div id="test1"></div>
+    <div id="test2"></div>
+    <div id="test3"></div>
 
-  <!-- 引入 react 核心庫， 全局多了一個對象 稱為：React-->
-  <script type="text/javascript" src="../js/react.development.js"></script>
-  <!-- 引入 react-dom. 用於支持 react 操作 DOM，全局也多了一個對象 稱為：ReactDOM -->
-  <script type="text/javascript" src="../js/react-dom.development.js"></script>
-  <!-- 引入 babel, 用於將 jsx 專為 js -->
-  <script type="text/javascript" src="../js/babel.min.js"></script>
-  <!-- 引入prop-types,用於對組件標籤屬性進行限制，全局又多了一個對象 稱為：PropTypes -->
-  <script type="text/javascript" src="../js/prop-types.js"></script>
+    <!-- 引入 react 核心庫， 全局多了一個對象 稱為：React-->
+    <script type="text/javascript" src="../js/react.development.js"></script>
+    <!-- 引入 react-dom. 用於支持 react 操作 DOM，全局也多了一個對象 稱為：ReactDOM -->
+    <script
+      type="text/javascript"
+      src="../js/react-dom.development.js"
+    ></script>
+    <!-- 引入 babel, 用於將 jsx 專為 js -->
+    <script type="text/javascript" src="../js/babel.min.js"></script>
+    <!-- 引入prop-types,用於對組件標籤屬性進行限制，全局又多了一個對象 稱為：PropTypes -->
+    <script type="text/javascript" src="../js/prop-types.js"></script>
 
-  <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
-  // 1. 創建組件
-  class Person extends React.Component{
-      render(){
-         // console.log(this);
-          const {name,age,sex} = this.props // 如何做限制呢？要對組件的實例對象的 props 裡面的東西，進行限制，也就是說對傳遞的東西 例如： name="tom" age={18} sex="女" 進行限制
+    <script type="text/babel">
+      // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+      // 1. 創建組件
+      class Person extends React.Component {
+        render() {
+          // console.log(this);
+          const { name, age, sex } = this.props; // 如何做限制呢？要對組件的實例對象的 props 裡面的東西，進行限制，也就是說對傳遞的東西 例如： name="tom" age={18} sex="女" 進行限制
           // props 是只讀的，不允許修改
           // this.props.name = 'jack' // 此行代碼會報錯，因為 props 是只讀的，不可修改的
           // this.props.age = age + 1 // 這也是不行的，因為它修改了，把運算完的值 age+1，再賦值回去 this.props.age
           return (
-              <ul>
+            <ul>
               <li>姓名：{name}</li>
               <li>性別：{sex}</li>
-              <li>年齡：{age+1}</li> {/** age+1 叫運算，不是修改 */}
-              </ul>
-          )
+              <li>年齡：{age + 1}</li> {/** age+1 叫運算，不是修改 */}
+            </ul>
+          );
+        }
       }
-  }
-  /* // 因為組件實例對象 this，是由你所定義的 Person組件 所 new 出來的，
+      /* // 因為組件實例對象 this，是由你所定義的 Person組件 所 new 出來的，
   而你定義的 Person組件，當你每寫一個 Person組件標籤， ReactDOM.render(<Person name="jerry" speak={speak}/>,document.getElementById('test1'))
   React 都會幫你 new 出來一個組件實例，而在組件實例身上的 props屬性 裡面，就包括了你所有傳進去的東西 例如：name="tom" age={18} sex="女" 和 name:'老劉', age:18, sex:'女
   所以你要和締造實例的人對話是最合適的，因此 Person組件 是專門締造實例的， 它締造這個實例的時候，就可以幫我們加上規則，所以我們要和 Person 進行對話，代碼如下：
@@ -57,45 +62,51 @@
   <!-- <script type="text/javascript" src="../js/prop-types.js"> -->
   */
 
-  //對標籤屬性進行類型，必要性的限制
-  Person.propTypes = { // propTypes 是 React 裡面的規矩，只要為類加上自身的 propTypes 屬性，就是在加規則
-    // isRequires 代表 name 是必須傳遞的，否則會報錯
-      name:PropTypes.string.isRequired,  // '必傳，字符串'， 而具體的規則，必須在 React.PropTypes 裡面尋找
-      // React 裡面有個內置的屬性是大寫的 PropTypes
-      // 限制name必傳，且為字符串
-      sex:PropTypes.string, //因為性別可以不傳值，所以可以不寫 isRequired
-      // 限制sex為字符串
-      age:PropTypes.number,
-      // 限制age為數值 number
-      speak:PropTypes.func, // 因為 function 是一個關鍵字，是定義函數的關鍵字，所以當限制必須傳遞為函數，我們不寫 function，要寫成 func
-      // 限制speak為函數
-  }
-  // 指定默認標籤屬性值
-  Person.defaultProps = { // defaultProps 代表默認值，當你沒有限制必須傳遞的時候，可以傳遞一個默認值
-      sex: '男', //sex默認值為男
-      age:18 // age默認值為18
-  }
-  // 渲染組件到頁面
-  ReactDOM.render(<Person name="jerry" speak={speak}/>,document.getElementById('test1'))
-  ReactDOM.render(<Person name="tom" age={18} sex="女" />,document.getElementById('test2'))
+      //對標籤屬性進行類型，必要性的限制
+      Person.propTypes = {
+        // propTypes 是 React 裡面的規矩，只要為類加上自身的 propTypes 屬性，就是在加規則
+        // isRequired 代表 name 是必須傳遞的，否則會報錯
+        name: PropTypes.string.isRequired, // '必傳，字符串'， 而具體的規則，必須在 React.PropTypes 裡面尋找
+        // React 裡面有個內置的屬性是大寫的 PropTypes
+        // 限制name必傳，且為字符串
+        sex: PropTypes.string, //因為性別可以不傳值，所以可以不寫 isRequired
+        // 限制sex為字符串
+        age: PropTypes.number,
+        // 限制age為數值 number
+        speak: PropTypes.func, // 因為 function 是一個關鍵字，是定義函數的關鍵字，所以當限制必須傳遞為函數，我們不寫 function，要寫成 func
+        // 限制speak為函數
+      };
+      // 指定默認標籤屬性值
+      Person.defaultProps = {
+        // defaultProps 代表默認值，當你沒有限制必須傳遞的時候，可以傳遞一個默認值
+        sex: "男", //sex默認值為男
+        age: 18, // age默認值為18
+      };
+      // 渲染組件到頁面
+      ReactDOM.render(
+        <Person name="jerry" speak={speak} />,
+        document.getElementById("test1")
+      );
+      ReactDOM.render(
+        <Person name="tom" age={18} sex="女" />,
+        document.getElementById("test2")
+      );
 
-  const p = {name:'老劉', age:18, sex:'女'}
-  // console.log('@',...p);
-  // ReactDO.render(<Person name={p.name} age={p.age} sex={p.sex}/>,document.getElementById('test3'))
-  ReactDOM.render(<Person {...p} />,document.getElementById('test3'))
-  // React裡面的 ... 是作為一個分隔符在使用
+      const p = { name: "老劉", age: 18, sex: "女" };
+      // console.log('@',...p);
+      // ReactDO.render(<Person name={p.name} age={p.age} sex={p.sex}/>,document.getElementById('test3'))
+      ReactDOM.render(<Person {...p} />, document.getElementById("test3"));
+      // React裡面的 ... 是作為一個分隔符在使用
 
-  function speak(){
-      console.log('我說話了');
-  }
+      function speak() {
+        console.log("我說話了");
+      }
 
-
-
-  /*總結：
+      /*總結：
   1. 限制只需要給組件自身加上 propTypes 或 defaultProps屬性
   2. 要注意大小寫，propTypes 和 PropTypes
 
   */
-  </script>
+    </script>
   </body>
 </html>

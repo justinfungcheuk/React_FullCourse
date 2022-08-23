@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>取消請求</title>
+  </head>
+  <body>
+    <button>點擊發送</button>
+    <button>點擊取消</button>
+    <script>
+      // 獲取元素對象
+      const btns = document.querySelectorAll("button");
+      let x = null; // 因為 x 原先是屬於第一個button內，我們要讓第二個button也能使用到 x，所以要把 x 定義為 let x = null;
+
+      btns[0].onclick = function () {
+        x = new XMLHttpRequest();
+        x.open("GET", "http://127.0.0.1:8000/delay");
+        x.send();
+      };
+
+      // abort - 它是屬於 AJAX對象的，在這是就是 x對象
+      // 所以調用 abort()方法就可以把請求取消
+      btns[1].onclick = function () {
+        x.abort();
+      };
+    </script>
+  </body>
+</html>

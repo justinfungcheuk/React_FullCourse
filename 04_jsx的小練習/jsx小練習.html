@@ -1,77 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 移動端適配 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>jsx小練習</title>
-</head>
+  </head>
   <body>
-  <!-- 準備好一個 "容器" -->
-  <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
-  <div id="test"></div>
+    <!-- 準備好一個 "容器" -->
+    <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
+    <div id="test"></div>
 
-  <!-- 引入 react 核心庫 -->
-  <script type="text/javascript" src="../js/react.development.js"></script>
-  <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
-  <script type="text/javascript" src="../js/react-dom.development.js"></script>
-  <!-- 引入 babel, 用於將 jsx 專為 js -->
-  <script type="text/javascript" src="../js/babel.min.js"></script>
+    <!-- 引入 react 核心庫 -->
+    <script type="text/javascript" src="../js/react.development.js"></script>
+    <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
+    <script
+      type="text/javascript"
+      src="../js/react-dom.development.js"
+    ></script>
+    <!-- 引入 babel, 用於將 jsx 專為 js -->
+    <script type="text/javascript" src="../js/babel.min.js"></script>
 
-  <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
-  // 模擬一些數據
-  const data = ['Angular','React','Vue']
-  
-  // 1. 創建虛擬 DOM = Virtual DOM
-  /**
-   * 一定要注意區分：【js語句】（代碼）與【js表達式】
-   * 1. 表達式：一個表達式會產生一個值，可以放在任何一個需要值的地方
-   * 例如：下面這些都是表達式：
-   * （1）a
-   * （2）a+b 
-   * （3）demo(1) 調用demo的函數
-   * 
-   * （4）arr.map()
-   * 例如：
-   * let arr = [1,3,5,7,9]
-   * 調用 map 的函數或方法，它有返回值，所以要定義一個變量 result 去接
-   * let result = arr.map((num)=>{ 拿到的每個值都是 num
-   * return num+1
-   * })
-   * console.log(result)     [2,4,6,8,10]
-   * 
-   * （5）function test () {}
-   * 例如： 
-   * const x = function test(){
-   *  console.log('@);
-   * }
-   *  console.log(x);
-   * 
-   * 2.語句（代碼）：控制代碼走向而且沒有值
-   * 下面這些都是語句（代碼）：
-   * （1）if(){}
-   *  (2) for(){}
-   *  (3) switch(){case:xxxx}
-   * 
-   */ // key={index}
-  const VDOM = (
-      <div>
-      <h1>前端js框架列表</h1>
-      <ul>
-      {
-          data.map((item,index)=>{
-              return <li key={index}>{item}</li>
-              
-          })
-          
-      }
-      </ul>
-      </div>
-  )
+    <script type="text/babel">
+      // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+      // 模擬一些數據
+      const data = ["Angular", "React", "Vue"];
 
+      // 1. 創建虛擬 DOM = Virtual DOM
+      /**
+       * 一定要注意區分：【js語句】（代碼）與【js表達式】
+       * 1. 表達式：一個表達式會產生一個值，可以放在任何一個需要值的地方
+       * 例如：下面這些都是表達式：
+       * （1）a
+       * （2）a+b
+       * （3）demo(1) 調用demo的函數
+       *
+       * （4）arr.map()
+       * 例如：
+       * let arr = [1,3,5,7,9]
+       * 調用 map 的函數或方法，它有返回值，所以要定義一個變量 result 去接
+       * let result = arr.map((num)=>{ 拿到的每個值都是 num
+       * return num+1
+       * })
+       * console.log(result)     [2,4,6,8,10]
+       *
+       * （5）function test () {}
+       * 例如：
+       * const x = function test(){
+       *  console.log('@);
+       * }
+       *  console.log(x);
+       *
+       * 2.語句（代碼）：控制代碼走向而且沒有值
+       * 下面這些都是語句（代碼）：
+       * （1）if(){}
+       *  (2) for(){}
+       *  (3) switch(){case:xxxx}
+       *
+       */ // key={index}
+      const VDOM = (
+        <div>
+          <h1>前端js框架列表</h1>
+          <ul>
+            {data.map((item, index) => {
+              return <li key={index}>{item}</li>;
+              // 當你 render 的項目沒有固定的 ID 且你也沒有更好的辦法時，你可以使用項目的索引做為 key：
+              // 我們並不建議你使用索引作為 key，尤其如果項目的順序會改變的話。
+              // 這會對效能產生不好的影響，也可能會讓 component state 產生問題。
+              // 請參考 Robin Pokorny 這篇深入剖析使用索引作為 key 的負面效應ㄧ文。
+              // 如果你選擇不明確分配 key 到列表項目時，React 預設將會使用索引作為 key。
+            })}
+          </ul>
+        </div>
+      );
 
-  //2. 渲染虛擬DOM到頁面
-  ReactDOM.render(VDOM,document.getElementById('test'))
-  </script>
+      //2. 渲染虛擬DOM到頁面
+      ReactDOM.render(VDOM, document.getElementById("test"));
+    </script>
   </body>
 </html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Promise - 封裝 ｜ 7 - 異步任務 then 方法實現</title>
+    <script src="./promise.js"></script>
+  </head>
+  <body>
+    <script>
+      let p = new Promise((resolve, reject) => {
+        setTimeout(() => {
+          //   resolve("OK");
+          reject("error");
+        }, 1000);
+        // resolve形參
+        // resolve("OK");
+        // resolve 函數，可以改變狀態 - fulfilled 和 設置結果值
+        // reject("error");
+        //拋出異常
+        // throw "error"; // 也是傳給 reason
+      });
+
+      p.then(
+        (value) => {
+          // 注意該回調函數 (value) => {} 的執行是在 onResolved 裡面，改變狀態之後才能執行
+          console.log(value);
+        },
+        (reason) => {
+          console.warn(reason);
+          // 把失敗的回調 reject("error") 傳給 reason
+        }
+      );
+      console.log(p);
+    </script>
+  </body>
+</html>

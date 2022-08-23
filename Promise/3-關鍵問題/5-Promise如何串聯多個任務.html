@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Promise關鍵問題 - 如何串聯多個任務</title>
+  </head>
+  <body>
+    <script>
+      let p = new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve("OK");
+        }, 1000);
+      });
+
+      p.then((value) => {
+        // then方法的返回結果也是一個 Promise對象
+        return new Promise((resolve, reject) => {
+          resolve("success");
+        });
+      })
+        .then((value) => {
+          console.log(value); // undefined
+          // 為什麼是 undefined 呢？ 因為 then的返回結果是一個 Promise，而該 Promise 狀態是由它指定的回調函數的返回值所決定
+          // 當前該回調函數 (value) => {console.log(value);}); 的返回值沒有被寫下，因為沒寫所以是一個 undefined
+          // 而由於 undefined 不是一個 Promise 類型的對象，所以該 then方法的返回結果就是一個 成功的 Promise，且成功的結果就是返回的結果 undefined
+        })
+        .then((value) => {
+          console.log(value); // undefined
+          // 為什麼是 undefined 呢？ 因為 then的返回結果是一個 Promise，而該 Promise 狀態是由它指定的回調函數的返回值所決定
+        });
+    </script>
+  </body>
+</html>

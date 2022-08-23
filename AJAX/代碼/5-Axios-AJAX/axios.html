@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>axios 發送 AJAX請求</title>
+    <script
+      crossorigin="anonymous"
+      src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"
+    ></script>
+  </head>
+  <body>
+    <button>GET</button>
+    <button>POST</button>
+    <button>AJAX</button>
+
+    <script>
+      const btns = document.querySelectorAll("button");
+
+      //配置 baseURL - 對路徑做簡化
+      axios.defaults.baseURL = "http://127.0.0.1:8000";
+
+      btns[0].onclick = function () {
+        // GET 請求
+        axios
+          .get("/axios-server", {
+            // url 參數
+            params: {
+              id: 100,
+              vip: 7,
+            },
+            //請求頭信息
+            headers: {
+              name: "atguigu",
+              age: 20,
+            },
+          })
+          .then((value) => {
+            console.log(value);
+          });
+      };
+
+      btns[1].onclick = function () {
+        axios.post(
+          "/axios-server",
+          {
+            // 第一個參數是 url
+            username: "admin", // 第二個參數是請求體
+            password: "admin",
+          },
+          {
+            // 第三個參數是其他配置
+            //url
+            params: {
+              id: 200,
+              vip: 9,
+            },
+            //請求頭參數
+            headers: {
+              height: 180,
+              weight: 180,
+            },
+          }
+        );
+      };
+
+      btns[2].onclick = function () {
+        axios({
+          //請求方法
+          method: "POST",
+          //url
+          url: "/axios-server",
+          //url參數
+          params: {
+            vip: 10,
+            level: 30,
+          },
+          //頭信息
+          headers: {
+            a: 100,
+            b: 200,
+          },
+          //請求體參數
+          data: {
+            username: "admin",
+            password: "admin",
+          },
+        }).then((response) => {
+          console.log(response);
+          //響應狀態碼
+          console.log(response.status);
+          //響應狀態字符串
+          console.log(response.statusText);
+          //響應頭信息
+          console.log(response.headers);
+          //響應體
+          console.log(response.data);
+        });
+      };
+    </script>
+  </body>
+</html>

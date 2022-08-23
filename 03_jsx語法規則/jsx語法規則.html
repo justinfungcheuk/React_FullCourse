@@ -1,61 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 移動端適配 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>jsx語法規則</title>
     <style>
-    .title{
+      .title {
         background-color: orange;
         width: 200px;
-    }
+      }
     </style>
-</head>
+  </head>
   <body>
-  <!-- 準備好一個 "容器" -->
-  <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
-  <div id="test"></div>
-  
+    <!-- 準備好一個 "容器" -->
+    <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
+    <div id="test"></div>
 
-  <!-- 引入 react 核心庫 -->
-  <script type="text/javascript" src="../js/react.development.js"></script>
-  <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
-  <script type="text/javascript" src="../js/react-dom.development.js"></script>
-  <!-- 引入 babel, 用於將 jsx 專為 js -->
-  <script type="text/javascript" src="../js/babel.min.js"></script>
+    <!-- 引入 react 核心庫 -->
+    <script type="text/javascript" src="../js/react.development.js"></script>
+    <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
+    <script
+      type="text/javascript"
+      src="../js/react-dom.development.js"
+    ></script>
+    <!-- 引入 babel, 用於將 jsx 專為 js -->
+    <script type="text/javascript" src="../js/babel.min.js"></script>
 
-  <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
-  const myId = 'aTgUiGu'
-  const myData = 'Hello,rEaCt'
-  // 1. 創建虛擬 DOM = Virtual DOM
-  const VDOM = (
-      <div>
-      <h2 className="title" id={myId.toLowerCase()}>
-      <span style={{color:'white', fontSize: '29px'}}>{myData.toLowerCase()}</span> 
-      </h2>
-      <h2 className="title" id={myData.toUpperCase()}>
-      <span style={{color:'white', fontSize: '29px'}}>{myData.toUpperCase()}</span> 
-      </h2>
-      <input type="text"/>
-      </div>
-  )
-  // 2. 渲染虛擬 DOM 到頁面
-  ReactDOM.render(VDOM,document.getElementById('test'))
+    <script type="text/babel">
+      // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+      const myId = "aTgUiGu";
+      const myData = "Hello,rEaCt";
+      // 1. 創建虛擬 DOM = Virtual DOM
+      const VDOM = (
+        <div>
+          <h2 className="title" id={myId.toLowerCase()}>
+            <span style={{ color: "white", fontSize: "29px" }}>
+              {myData.toLowerCase()}
+            </span>
+          </h2>
+          <h2 className="title" id={myData.toUpperCase()}>
+            <span style={{ color: "white", fontSize: "29px" }}>
+              {myData.toUpperCase()}
+            </span>
+          </h2>
+          <input type="text" />
+        </div>
+      );
+      // 2. 渲染虛擬 DOM 到頁面
+      ReactDOM.render(VDOM, document.getElementById("test"));
 
-  /**
-   * jsx 語法規則：
-   * 1. 定義虛擬DOM時，不要寫引號。
-   * 2. 標籤中混入JS表達式時要用{}。
-   * 3. 樣式的類名指定不要用 class，要用 className
-   * 4. 內聯樣式，要用 style={{key:value}}的形式去寫
-   * 5. 虛擬DOM必須只有一個根標籤
-   * 6. 標籤必須閉合
-   * 7. 標籤首字母
-   * - (1). 若小寫字母開頭，則將該標籤轉為 html 中同名元素 （例如：jsx 的  span 就會對應 html 的 span）, 若 html 中無該標籤對應的同名元素，則報錯
-   * - (2). 若大寫子母開頭, react 就去渲染對應的組件, 若組件沒有定義, 則報錯。
-   * 
-   */
-  </script>
+      /**
+       * jsx 語法規則：
+       * 1. 定義虛擬DOM時，不要寫引號。
+       * 2. 標籤中混入JS表達式時要用{}。
+       * 3. 樣式的類名指定不要用 class，要用 className
+       * 4. 內聯樣式，要用 style={{key:value}}的形式去寫
+       * 5. 虛擬DOM必須只有一個根標籤
+       * 6. 標籤必須閉合
+       * 7. 標籤首字母
+       * - (1). 若小寫字母開頭，則將該標籤轉為 html 中同名元素 （例如：jsx 的  span 就會對應 html 的 span）,
+       * 若 html 中無該標籤對應的同名元素，則報錯
+       * - (2). 若大寫子母開頭, react 就去渲染對應的組件, 若組件沒有定義, 則報錯。
+       *
+       */
+    </script>
   </body>
 </html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AJAX POST 請求</title>
+    <style>
+      #result {
+        width: 200px;
+        height: 100px;
+        border: solid 1px #903;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="result"></div>
+    <script>
+      //獲取元素對象
+      const result = document.getElementById("result");
+      //綁定事件
+      result.addEventListener("mouseover", function () {
+        // 1. 創建對象
+        const xhr = new XMLHttpRequest();
+        // 2. 初始化 設置請求類型與URL
+        xhr.open("POST", "http://127.0.0.1:8000/server");
+        // 設置請求頭
+        xhr.setRequestHeader(
+          "Content-Type",
+          "application/x-www-form-urlencoded"
+        ); // 接收兩個參數，第一個參數是請求頭的名字，第二個參數是請求頭的值
+        // "Content-Type" 是用於設置請求體（例如："a=100&b=200&c=300"）內容的類型
+        // "application/x-www-form-urlencoded" 是該參數 "a=100&b=200&c=300"，查詢字符串的類型，這是一個固定的寫法
+        xhr.setRequestHeader("name", "atguigu");
+
+        // 3. 發送
+        // 該形式用的較多
+        xhr.send("a=100&b=200&c=300"); // POST 的請求 是如何設置參數？ 該參數設置的請求體是在 send() 裡面設置的，以 url 的形式設置
+        //xhr.send("a:100&b:200&c:300");
+        //xhr.send("123456789");
+        // 以上請求體的格式設置非常靈活，想設置什麼就什麼，只要服務端有與其對應的能夠處理的方式就可以
+        // 重點！！！但是從語法上是可以隨意寫，而在實際場景應用當中還是要按照特點格式來寫
+
+        // 4. 事件綁定
+        xhr.onreadystatechange = function () {
+          // 判斷
+          if (xhr.readyState === 4) {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              // 處理服務端返回的結果
+              result.innerHTML = xhr.response;
+            }
+          }
+        };
+      });
+    </script>
+  </body>
+</html>

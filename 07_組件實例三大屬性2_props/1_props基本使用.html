@@ -1,74 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 移動端適配 -->
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 移動端適配 -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>1_props基本使用</title>
-</head>
+  </head>
   <body>
-  <!-- 準備好一個 "容器" -->
-  <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
-  <div id="test1"></div> <!-- 因為 HTML標籤，能夠寫標籤屬性，例如該部分的 div 就是 HTML標籤，裡面寫了 屬性名為：id，屬性值為：test1，它們也就是一組 key:value 的組合 -->
-  <div id="test2"></div>
-  <div id="test3"></div>
-  <!-- HTML標籤本身就能寫多組 key:value 組合這種標籤形式，而組件標籤也能寫 -->
+    <!-- 準備好一個 "容器" -->
+    <!-- 必須要按順序引入！！！！核心庫就位了，才可以把擴展庫引用，否則使用不了  -->
+    <div id="test1"></div>
+    <!-- 因為 HTML標籤，能夠寫標籤屬性，例如該部分的 div 就是 HTML標籤，裡面寫了 屬性名為：id，屬性值為：test1，它們也就是一組 key:value 的組合 -->
+    <div id="test2"></div>
+    <div id="test3"></div>
+    <!-- HTML標籤本身就能寫多組 key:value 組合這種標籤形式，而組件標籤也能寫 -->
 
+    <!-- 引入 react 核心庫 -->
+    <script type="text/javascript" src="../js/react.development.js"></script>
+    <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
+    <script
+      type="text/javascript"
+      src="../js/react-dom.development.js"
+    ></script>
+    <!-- 引入 babel, 用於將 jsx 專為 js -->
+    <script type="text/javascript" src="../js/babel.min.js"></script>
 
-  <!-- 引入 react 核心庫 -->
-  <script type="text/javascript" src="../js/react.development.js"></script>
-  <!-- 引入 react-dom. 用於支持 react 操作 DOM -->
-  <script type="text/javascript" src="../js/react-dom.development.js"></script>
-  <!-- 引入 babel, 用於將 jsx 專為 js -->
-  <script type="text/javascript" src="../js/babel.min.js"></script>
-
-  <script type="text/babel"> // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
-  // 1. 創建組件
-  // 當把組件定義到這裡 Person，每寫一次組件標籤，都會 new 一個 Person 的實例，都會調一次 render 和 輸出一個 this
-  class Person extends React.Component{
-      render(){
-         console.log(this); // 該 this 也就是組件的實例對象
-          const {name,age,sex} = this.props // 解構賦值的方式使用 this.props
-          return ( // 因為是多級結構，所以加上小括號()比較好
-              <ul>
+    <script type="text/babel">
+      // 該部分一定要寫 babel 是表示裡面寫的不再是 js, 而是 jsx
+      // 1. 創建組件
+      // 當把組件定義到這裡 Person，每寫一次組件標籤，都會 new 一個 Person 的實例，都會調一次 render 和 輸出一個 this
+      class Person extends React.Component {
+        render() {
+          console.log(this); // 該 this 也就是組件的實例對象
+          const { name, age, sex } = this.props; // 解構賦值的方式使用 this.props
+          return (
+            // 因為是多級結構，所以加上小括號()比較好
+            <ul>
               <li>姓名：{name}</li>
               <li>性別：{sex}</li>
-              <li>年齡：{age+1}</li>
-              </ul>
-          )
+              <li>年齡：{age + 1}</li>
+            </ul>
+          );
+        }
       }
-  }
-  // 渲染組件到頁面
-  // 把 name 傳給了 Person，而當 React 幫你 new 這個 Person 實例的時候，就會自動的把你所寫的 name 作為 key，而 tom 則為 value，把該組key：value收集好了，放到 props
-  ReactDOM.render(<Person name="jerry" age={19} sex="男" />,document.getElementById('test1'))
-  // 從外部渲染組件該處做編碼的修改後，再傳遞進去到組件裡面，就要使用到 props
-  ReactDOM.render(<Person name="tom" age={18} sex="女" />,document.getElementById('test2'))  
-  // number 類型 {18} 的年齡可以直接從 {age+1} 上，加多一歲，而字符串的 age = "18" 卻不行
-  // 我們需要對 Person 該組件所傳遞的標籤屬性 name="tom" age={18} sex="女"，進行類型的限制，同樣是 18 不能傳遞這種字符串的 "18",要傳遞對象的 {18}，這是對標籤屬性類型的限制
-  /*
+      // 渲染組件到頁面
+      // 把 name 傳給了 Person，而當 React 幫你 new 這個 Person 實例的時候，就會自動的把你所寫的 name 作為 key，而 tom 則為 value，把該組key：value收集好了，放到 props
+      ReactDOM.render(
+        <Person name="jerry" age={19} sex="男" />,
+        document.getElementById("test1")
+      );
+      // 從外部渲染組件該處做編碼的修改後，再傳遞進去到組件裡面，就要使用到 props
+      ReactDOM.render(
+        <Person name="tom" age={18} sex="女" />,
+        document.getElementById("test2")
+      );
+      // number 類型 {18} 的年齡可以直接從 {age+1} 上，加多一歲，而字符串的 age = "18" 卻不行
+      // 我們需要對 Person 該組件所傳遞的標籤屬性 name="tom" age={18} sex="女"，進行類型的限制，同樣是 18 不能傳遞這種字符串的 "18",要傳遞對象的 {18}，這是對標籤屬性類型的限制
+      /*
   三個問題：
   1. 對傳遞的標籤屬性進行類型的限制
   2. 進行必要性的限制。例如：名字必須傳遞
   3. 給某一個屬性指定默認值。例如：性別
   */
-  
-  //  name,age,sex 都是 Person 這個組件標籤的標籤屬性，所以當傳遞 props 和 傳遞標籤屬性 都是相同的
-  // props 代表多組屬性
 
-  const p = {name:'老劉', age:18, sex:'女'} 
-  // console.log('@',...p);
-  // ReactDO.render(<Person name={p.name} age={p.age} sex={p.sex}/>,document.getElementById('test3'))
-  ReactDOM.render(<Person {...p} />,document.getElementById('test3')) // ... 叫展開運算符
-  // {...p} 可以一次性把 const p = {name:'老劉', age:18, sex:'女'} 的 所有 key:value 都傳遞到 const {name,age,sex} = this.props
-  // React裡面的 ... 是作為分隔符在使用，而由於 React 有 babel 和 react.development 意味著 ...p 可以展開一個對象。但是它只適用於 標籤屬性 的傳遞，別的地方都不行
+      //  name,age,sex 都是 Person 這個組件標籤的標籤屬性，所以當傳遞 props 和 傳遞標籤屬性 都是相同的
+      // props 代表多組屬性
 
+      const p = { name: "老劉", age: 18, sex: "女" };
+      // console.log("@", ...p);
+      // ReactDOM.render(<Person name={p.name} age={p.age} sex={p.sex}/>,document.getElementById('test3'))
+      ReactDOM.render(<Person {...p} />, document.getElementById("test3")); // ... 叫展開運算符
+      // {...p} 可以一次性把 const p = {name:'老劉', age:18, sex:'女'} 的 所有 key:value 都傳遞到 const {name,age,sex} = this.props
+      // React裡面的 ... 是作為分隔符在使用，而由於 React 有 babel 和 react.development 意味著 ...p 可以展開一個對象。但是它只適用於 標籤屬性 的傳遞，別的地方都不行
 
-
-
-  /* 總結：
+      /* 總結：
    1. 標籤屬性，透過 ... 可以有批量傳遞的作用 
    2. 對於類式組件，把渲染組件到頁面這部分的所有的標籤屬性收集到 this 實例對象的 props屬性上，因為你傳的是 key:value 的組合，所以它收集的也是一個對象{},而對象裡面就是一組一組的 key:value 組合
    */
-  </script>
+    </script>
   </body>
 </html>

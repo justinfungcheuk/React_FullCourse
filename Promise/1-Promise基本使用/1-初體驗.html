@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>基本使用</title>
+    <link
+      crossorigin="annoymous"
+      href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h2 class="page-header">Promise 初體驗</h2>
+      <button class="btn btn-primary" id="btn">點擊抽獎</button>
+    </div>
+    <script>
+      //生成隨機數
+      function rand(m, n) {
+        return Math.ceil(Math.random() * (n - m + 1)) + m - 1;
+      }
+      /**
+       * 點擊按鈕， 1s 後顯示是否中獎 （30%概率中獎）
+       * 若中獎彈出 - 恭喜恭喜，獎品為 10萬 RMB 勞斯萊斯優惠卷
+       * 若未中獎彈出 - 再接再厲
+       */
+      // 獲取元素對象
+      const btn = document.querySelector("#btn");
+      // 綁定單機事件
+      btn.addEventListener("click", function () {
+        // 定時器
+        // setTimeout(() => {
+        //   //30% 1- 100  1 2 30
+        //   // 獲取從 1 - 100 的一個隨機數
+        //   let n = rand(1, 100);
+        //   //判斷
+        //   if (n <= 30) {
+        //     alert("恭喜恭喜，獎品為 10萬 RMB 勞斯萊斯優惠卷");
+        //   } else {
+        //     alert("再接再厲");
+        //   }
+        // }, 1000);
+
+        // Promise 形式實現
+        // resolve 解決  函數類型的數據
+        // reject 拒絕  函數類型的數據
+        const p = new Promise((resolve, reject) => {
+          // Promise 實例化 - 該實例化需要接收一個參數，而該參數是一個函數類型的值，該函數有兩個形參
+          // 對異步任務的一個封裝如下：
+          // 定時器
+          setTimeout(() => {
+            //30% 1- 100  1 2 30
+            // 獲取從 1 - 100 的一個隨機數
+            let n = rand(1, 100);
+            //判斷
+            if (n <= 30) {
+              resolve(n); // 將 promise 的狀態設置為 【成功】
+            } else {
+              reject(n); // 將 promise 的狀態設置為 【失敗】
+            }
+          }, 1000);
+        });
+        // 用 Promise 來封裝一個異步的操作 setTimeout
+        // 成功的時候調用 resolve，並且把成功的結果傳給 resolve函數，失敗的時候，調用 reject()，把失敗的原因或錯誤傳給 reject函數
+        // 再從 then方法裡面，去處理成功和失敗的結果
+        // 成功則調用第一個回調函數的代碼 - value
+        // 失敗則調用第二個回調函數的代碼 - reason
+
+        // 調用 then 方法，來指定 成功 和 失敗的回調
+        // value  值
+        // reason 理由
+        p.then(
+          (value) => {
+            alert(
+              "恭喜恭喜，獎品為 10萬 RMB 勞斯萊斯優惠卷，你的中獎數字為" + value
+            );
+          },
+          (reason) => {
+            alert("再接再厲， 你的號碼為" + reason);
+          }
+        );
+      });
+    </script>
+  </body>
+</html>

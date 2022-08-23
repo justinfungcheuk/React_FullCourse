@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>await</title>
+  </head>
+  <body>
+    <script>
+      async function main() {
+        let p = new Promise((resolve, reject) => {
+          //   resolve("OK");
+          reject("Error");
+        });
+        //1. 右側為 promise 的情況 - 由於右側是一個 promise對象，則 await 會返回該 p - promise對象的成功的值【這裡成功的值是 OK】
+        // let res = await p;
+        // console.log(res);
+        //2. 右側為其他類型的數據 - 右側是什麼就返回什麼
+        // let res2 = await 20; //該情況比較少用，通常都是第一種情況
+        // console.log(res2);
+        //3. 如果 Promise是失敗的狀態
+        try {
+          let res3 = await p;
+        } catch (e) {
+          console.log(e);
+        }
+      }
+
+      main();
+    </script>
+  </body>
+</html>

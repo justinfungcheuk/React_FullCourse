@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>重複請求問題</title>
+  </head>
+  <body>
+    <button>點擊發送</button>
+    <script>
+      // 獲取元素對象
+      const btns = document.querySelectorAll("button");
+      let x = null; // 因為 x 原先是屬於第一個button內，我們要讓第二個button也能使用到 x，所以要把 x 定義為 let x = null;
+      // 標識變量
+      let isSending = false; // 是否正在發送 AJAX請求 - false 表示沒有發送，true 表示有發送
+
+      btns[0].onclick = function () {
+        // 判斷標識變量 - 在下次再點擊按鈕的時候再判斷標識變量
+        if (isSending) x.abort(); // 如果正在發送，則取消上一個請求，創建一個新的請求
+        x = new XMLHttpRequest();
+        // 修改標識變量的值
+        isSending = true;
+        // 該值什麼時候應該變為 false 呢？ 當我們的請求在完成之後，再還原成 false，所以就是在我們的請求完全回來之後，回來了代表我們的請求已經完成了，此時把正在發送請求的變量 isSending = false 就可以
+        x.open("GET", "http://127.0.0.1:8000/delay");
+        x.send();
+        x.onreadystatechange = function () {
+          if (x.readyState === 4) {
+            // 狀態為4，代表請求完成
+            // 修改標識變量
+            isSending = false; // 這裡不做判斷是因為該請求有可能是一個失敗的請求，如果在成功裡面做判斷該變量 isSending 將永遠不會為 false
+            // 所以只要 x.readyState === 4 狀態為4，就可以把標識變量修改為 false
+          }
+        };
+      };
+
+      // abort - 它是屬於 AJAX對象的，在這是就是 x對象
+      // 所以調用 abort()方法就可以把請求取消
+      btns[1].onclick = function () {
+        x.abort();
+      };
+    </script>
+  </body>
+</html>

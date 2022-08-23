@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Promise關鍵問題 - 中斷 Promise 鏈條</title>
+  </head>
+  <body>
+    <script>
+      let p = new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve("OK");
+          //   reject("Err");
+        }, 1000);
+      });
+
+      p.then((value) => {
+        console.log(111);
+        //有且只有一個方式來中斷 Promise鏈條
+        return new Promise(() => {}); // 由於這裡返回的是一個 pending，所以 then方法返回的也是一個 pending狀態的 promise對象
+        // 當then方法是一個 pending狀態的 promise對象的時候，後面的 then方法的回調都不能夠執行
+        // 因為狀態沒有改變，後面的所有 then方法都不能夠執行
+        // 原因是在回調函數什麼時候能夠執行？ 是在then方法改變狀態完成之後才可以執行，而一直是 pending狀態就不可以執行
+      })
+        .then((value) => {
+          console.log(222);
+        })
+        .then((value) => {
+          console.log(333);
+        })
+        .catch((reason) => {
+          console.warn(reason);
+        });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>axios的由來 - 重點課</title>
+    <!-- <script src="../node_modules/axios/dist/mine-axios.js"> </script> -->
+</head>
+<body>
+    <script>
+        // console.log(axios);
+        // axios();
+        // axios.get();
+        // axios.post();
+
+        //構造函數 - - Axios該構造函數的整體結構搭建如下：
+        function Axios(config){
+            //初始化
+            this.default = config; // 為了創建 default 默認屬性
+            this.intercepters = {
+                request: {},
+                response: {}
+            }
+        }
+
+        // 原型添加相關的方法 
+        Axios.prototype.request = function(config){
+            console.log("發送 AJAX 請求 請求的類型為" + config.method);
+        }
+        Axios.prototype.get = function(config){
+            return this.request({method: "GET"});
+        }
+        Axios.prototype.post = function(config){
+            return this.request({method: "POST"});
+        }
+        // 除了 request 之外，get 和 post 都可以發送 AJAX請求，原因是因為它們內部調用了 request方法
+
+        //聲明函數 
+        function createInstance(config){
+            //實例化一個對象
+            let context = new Axios(config);
+            /**
+             * 由於通過 let context = new Axios(config);
+             * 所以 context 該對象身上就有了 defaults, intercepters 等等
+             * 並且原型添加相關的方法，context 也可以去調用。例如：request / get / post 等等
+             * 因此，context 可以直接使用。例如：context.get()  /  context.post()
+             * 但是不能當作函數使用 - context() 《--也就是不可以這樣使用
+             */
+
+             //創建請求函數
+             let instance = Axios.prototype.request.bind(context); 
+             // instance 是一個函數，並且可以調用 instance({}) 就可以發送請求，調用裡面的代碼，但此時 instance 不能當作對象使用 - 也就是例如：instance.get / instance.post用不了
+             //將 Axios.prototype 對象中的方法添加到 instance函數對象中
+             Object.keys(Axios.prototype).forEach(key => { // 此時的 keys 就可以調用 get / post / request
+                instance[key] = Axios.prototype[key].bind(context); // this.default   this.interceptors
+             })
+             // 為 instance 函數對象添加屬性 default 與 interceptors
+             Object.keys(context).forEach(key => {
+                instance[key] = context[key];
+             });
+             return instance;
+        }
+
+        let axios = createInstance();
+        //發送請求
+        //axios({method: "POST"});
+        axios.get({}); // 當作對象使用
+        axios.post({});
+    </script>
+</body>
+</html>

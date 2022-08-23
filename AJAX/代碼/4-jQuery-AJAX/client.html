@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>jQuery 發送 AJAX請求</title>
+    <link
+      href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script
+      crossorigin="anonymous"
+      src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"
+    ></script>
+    <!-- crossorigin 代表跨域源的請求的屬性設置 annonymous 代表向 src該資源發送請求時將不會帶有當前域名的cookie -->
+  </head>
+  <body>
+    <div class="container">
+      <h2 class="page-header">jQuery發送AJAX請求</h2>
+      <button class="btn btn-primary">GET</button>
+      <button class="btn btn-danger">POST</button>
+      <button class="btn btn-info">通用型方法ajax</button>
+    </div>
+    <script>
+      $("button")
+        .eq(0)
+        .click(function () {
+          $.get(
+            "http://127.0.0.1:8000/jquery-server",
+            { a: 100, b: 200 },
+            function () {
+              // 第一個參數代表給誰發 - "http://127.0.0.1:8000/jquery-server"
+              // 第二個參數代表要發送什麼參數 - 該參數類型是一個對象 - {a:100, b:200}
+              // 第三個參數是回調
+              console.log(data);
+            },
+            "json"
+          ); // 第四個參數是響應體類型，最常使用的是傳 "json"，表示響應體是一個 json格式數據
+        });
+
+      $("button")
+        .eq(1)
+        .click(function () {
+          $.post(
+            "http://127.0.0.1:8000/jquery-server",
+            { a: 100, b: 200 },
+            function () {
+              // 第一個參數代表給誰發 - "http://127.0.0.1:8000/jquery-server"
+              // 第二個參數代表要發送什麼參數 - 該參數類型是一個對象 - {a:100, b:200}
+              // 第三個參數是回調
+              console.log(data);
+            }
+          );
+        });
+
+      $("button")
+        .eq(2)
+        .click(function () {
+          $.ajax({
+            // url
+            url: "http://127.0.0.1:8000/json-server",
+            // 參數
+            data: { a: 100, b: 200 },
+            // 請求類型
+            type: "GET",
+            // 響應體結果
+            dataType: "json",
+            // 成功的回調
+            success: function (data) {
+              console.log(data);
+            },
+            // 超時時間
+            timeout: 2000,
+            // 失敗的回調
+            error: function () {
+              console.log("出錯啦！！！");
+            },
+            // 頭信息
+            header: {
+              c: 300,
+              d: 400,
+            },
+          });
+        });
+    </script>
+  </body>
+</html>

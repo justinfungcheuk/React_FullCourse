@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Promise - 封裝 ｜ 12 - Promise.resolve 封裝</title>
+    <script src="./promise.js"></script>
+  </head>
+  <body>
+    <script>
+      //實例化對象
+      const p = Promise.resolve("OK");
+      /**
+       * resolve() 括號傳入的是一個非 Promise類型的數據
+       * 它的狀態就是一個成功，且傳入的參數就是 p 的成功結果值
+       *
+       * 但是當傳入的是一個 Promise的對象，p 返回的結果就由傳入的 Promise對象的狀態和結果來決定
+       * 所以當傳入的值成功則成功，而傳入的是失敗 p 也是失敗
+       */
+
+      const p2 = Promise.resolve(
+        new Promise((resolve, reject) => {
+          //   resolve("Success");
+          reject("Error");
+        })
+      );
+
+      const p3 = Promise.resolve(Promise.resolve("Oh Yeah"));
+      console.log(p3);
+    </script>
+  </body>
+</html>
